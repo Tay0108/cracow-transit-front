@@ -68,8 +68,8 @@ export class MapContainer extends Component {
         return (
             <div style={style}>
                 <Map google={this.props.google} zoom={13} initialCenter={{ lat: 50.0613888889, lng: 19.9383333333 }} onClick={this.onMapClicked}>
+                    {/* {this.props.stops.map((stop) => this.displayStop(stop))} */}
                     {this.props.trams.map((tram) => this.displayTram(tram))}
-                    {this.props.stops.map((stop) => this.displayStop(stop))}
                     <InfoWindow
                         marker={this.state.activeMarker}
                         onClose={this.onInfoWindowClose}

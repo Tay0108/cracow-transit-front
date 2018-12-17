@@ -12,8 +12,9 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.getTrams();
     this.getStops();
+    this.getTrams();
+    setInterval(() => this.getTrams(), 5000);
   }
 
   getStops() {
@@ -23,9 +24,9 @@ class App extends Component {
   }
 
   getTrams() {
-    setInterval(() => fetch('http://localhost:8080/vehicleInfo/vehicles')
+    fetch('http://localhost:8080/vehicleInfo/vehicles')
       .then(response => response.json())
-      .then(trams => this.setState({ trams: trams.vehicles })), 8000);
+      .then(trams => this.setState({ trams: trams.vehicles }));
   }
 
   render() {
@@ -38,7 +39,7 @@ class App extends Component {
     }
 
     if (this.state.stops === undefined) {
-       return ('loading stops...');
+      return ('loading stops...');
     }
 
     if (this.state.trams === undefined) {

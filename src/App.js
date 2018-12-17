@@ -1,28 +1,56 @@
 import React, { Component } from 'react';
 import './App.css';
+import MapContainer from './components/MapContainer';
 
 class App extends Component {
 
   constructor() {
     super();
-    this.state = {
-      vehicles : []
-    };
+    this.state = {};
+    this.getStops = this.getStops.bind(this);
+    this.getTrams = this.getTrams.bind(this);
   }
 
   componentDidMount() {
-    fetch('https://mpk.jacekk.net/proxy.php/services/tripInfo/tripPassages?tripId=6351558574047093766&mode=departure' ,{mode: 'no-cors'})
-    .then(result => result.json())
-    .then(json => this.setState({vehicles: json}));
+    this.getTrams();
+    this.getStops();
+  }
+
+  getStops() {
+    fetch('http://localhost:8080/stopInfo/stops')
+      .then(response => response.json())
+      .then(stops => this.setState({ stops: stops.stops }));
+  }
+
+  getTrams() {
+    setInterval(() => fetch('http://localhost:8080/vehicleInfo/vehicles')
+      .then(response => response.json())
+      .then(trams => this.setState({ trams: trams.vehicles })), 8000);
   }
 
   render() {
-    console.log(this.state.vehicles);
+
+    function normalizeMarker(obj) {
+      obj.latitude /= (1000 * 3600);
+      obj.longitude /= (1000 * 3600);
+
+      return obj;
+    }
+
+    if (this.state.stops === undefined) {
+       return ('loading stops...');
+    }
+
+    if (this.state.trams === undefined) {
+      return ('loading trams...');
+    }
+
+    let trams = this.state.trams.map((tram) => normalizeMarker(tram));
+    let stops = this.state.stops.map((stop) => normalizeMarker(stop));
+
     return (
       <div className="App">
-
-      {this.state.vehicles}
-      
+        <MapContainer stops={stops} trams={trams} />
       </div>
     );
   }

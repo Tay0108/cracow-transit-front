@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Marker from './components/Marker/Marker';
 import './App.css';
 
 class App extends Component {
@@ -6,23 +7,42 @@ class App extends Component {
   constructor() {
     super();
     this.state = {
-      vehicles : []
     };
+    this.callAPI = this.callAPI.bind(this);
   }
 
   componentDidMount() {
-    fetch('https://mpk.jacekk.net/proxy.php/services/tripInfo/tripPassages?tripId=6351558574047093766&mode=departure' ,{mode: 'no-cors'})
-    .then(result => result.json())
-    .then(json => this.setState({vehicles: json}));
+    //setInterval(()=> this.callAPI(), 10000)
+  }
+
+  callAPI() {
+    fetch('http://localhost:8080/stopInfo/stops')
+    .then(response => response.json())
+    .then(stops => this.setState({stops: stops.stops}));
   }
 
   render() {
-    console.log(this.state.vehicles);
+
+    function displayMarker(stop) {
+
+      let latitude = stop.latitude / 1000 / 3600;
+      let longitude = stop.longitude / 1000 / 3600;
+  
+      return <Marker latitude={latitude} longitude={longitude}/>
+    }
+
+
+    if(this.state.stops === undefined) {
+      return ('pusto');
+    }
+
+  
+
+    let stops = this.state.stops;
+
     return (
       <div className="App">
-
-      {this.state.vehicles}
-      
+      {stops.map((stop) => displayMarker(stop))}
       </div>
     );
   }

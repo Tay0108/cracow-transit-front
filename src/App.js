@@ -7,41 +7,49 @@ class App extends Component {
   constructor() {
     super();
     this.state = {};
-    this.callAPI = this.callAPI.bind(this);
+    this.getStops = this.getStops.bind(this);
+    this.getTrams = this.getTrams.bind(this);
   }
 
   componentDidMount() {
-    //setInterval(()=> this.callAPI(), 10000)
+    this.getStops();
+    this.getTrams();
+    //setInterval(() => this.getTrams(), 5000)
   }
 
-  callAPI() {
+  getStops() {
     fetch('http://localhost:8080/stopInfo/stops')
       .then(response => response.json())
       .then(stops => this.setState({ stops: stops.stops }));
   }
+  getTrams() {
+    setInterval(() => fetch('http://localhost:8080/vehicleInfo/vehicles')
+      .then(response => response.json())
+      .then(trams => this.setState({ trams: trams.vehicles })), 5000);
+  }
 
   render() {
 
-    // function displayMarker(stop) {
+    function normalizeMarker(obj) {
+      obj.latitude /= (1000 * 3600);
+      obj.longitude /= (1000 * 3600);
 
-    //   let latitude = stop.latitude / 1000 / 3600;
-    //   let longitude = stop.longitude / 1000 / 3600;
+      return obj;
+    }
 
-    //   return <Marker latitude={latitude} longitude={longitude} />
-    // }
+    if (this.state.stops === undefined) {
+      return ('loading stops...');
+    }
+    if (this.state.trams === undefined) {
+      return ('loading trams...');
+    }
 
-
-    // if (this.state.stops === undefined) {
-    //   return ('pusto');
-    // }
-
-
-    // let stops = this.state.stops;
+    let stops = this.state.stops.map((stop) => normalizeMarker(stop));
+    let trams = this.state.trams.map((tram) => normalizeMarker(tram));
 
     return (
       <div className="App">
-        <Container/>
-        {/* {stops.map((stop) => displayMarker(stop))} */}
+        <Container stops={stops} trams={trams} />
       </div>
     );
   }

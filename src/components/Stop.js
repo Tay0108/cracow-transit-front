@@ -26,7 +26,7 @@ export default class Stop extends Component {
     }
 
     getPassages() {
-        fetch('https://cracow-trams.herokuapp.com/passageInfo/stops/' + this.props.info.shortName)
+        fetch('http://localhost:8080/passageInfo/stops/' + this.props.info.shortName)
             .then(response => response.json())
             .then(passages => {
                 passages = passages.actual;

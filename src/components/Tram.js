@@ -28,7 +28,7 @@ export default class Tram extends Component {
     }
 
     getWaypoints() {
-        fetch('https://cracow-trams.herokuapp.com/pathInfo/vehicle/' + this.props.info.id)
+        fetch('http://localhost:8080/pathInfo/vehicle/' + this.props.info.id)
             .then(response => response.json())
             .then(path => {
                 path = path.paths[0];
@@ -39,7 +39,7 @@ export default class Tram extends Component {
     }
 
     getStops() {
-        fetch('https://cracow-trams.herokuapp.com/tripInfo/tripPassages/' + this.props.info.tripId)
+        fetch('http://localhost:8080/tripInfo/tripPassages/' + this.props.info.tripId)
             .then(response => response.json())
             .then(obj => {
                 let stops = [...new Set(obj.actual)]; // because some stops were duplicated
@@ -52,7 +52,7 @@ export default class Tram extends Component {
     }
 
     getDelay() {
-        fetch('https://cracow-trams.herokuapp.com/passageInfo/stops/' + this.state.nextStop)
+        fetch('http://localhost:8080/passageInfo/stops/' + this.state.nextStop)
             .then(response => response.json())
             .then(passages => {
 

@@ -14,46 +14,40 @@ class App extends Component {
 
   componentDidMount() {
     this.getStops();
-    //this.setState({stops: this.state.stops.map((stop) => this.normalizeMarker(stop))});
     this.getTrams();
-    //this.setState({trams: this.state.trams.map((tram) => this.normalizeMarker(tram))});
-    setInterval(() => this.getTrams(), 5000);
-    //this.setState({trams: this.state.trams.map((tram) => this.normalizeMarker(tram))});
+    setInterval(() => this.getTrams(), 10000);
   }
 
-  
   normalizeMarker(obj) {
-
     if (obj.latitude !== undefined && obj.longitude !== undefined) {
-      obj.latitude /= (1000 * 3600);
-      obj.longitude /= (1000 * 3600);
+      obj.latitude /= (1000.0 * 3600.0);
+      obj.longitude /= (1000.0 * 3600.0);
     }
 
     return obj;
-
   }
 
   getStops() {
     fetch('http://localhost:8080/stopInfo/stops')
       .then(response => response.json())
       .then(stops => {
-        stops = stops.stops.map((stop) => this.normalizeMarker(stop));
+        stops = stops.stops.filter(stop => stop.category === 'tram');
+        stops = stops.map((stop) => this.normalizeMarker(stop));
         this.setState({ stops: stops })
       });
   }
 
   getTrams() {
     fetch('http://localhost:8080/vehicleInfo/vehicles')
-       .then(response => response.json())
-       .then(trams => 
-        {
-          trams = trams.vehicles.map((tram) => this.normalizeMarker(tram));
-          this.setState({ trams: trams });
-        });
+      .then(response => response.json())
+      .then(trams => {
+        trams = trams.vehicles.filter((tram) => (!tram.deleted && tram.latitude !== undefined && tram.longitude !== undefined));
+        trams = trams.map((tram) => this.normalizeMarker(tram));
+        this.setState({ trams: trams });
+      });
   }
 
   render() {
-
 
     if (this.state.stops === undefined) {
       return ('loading stops...');
@@ -68,7 +62,7 @@ class App extends Component {
 
     return (
       <div className="App">
-        <MapContainer stops={stops} trams={trams}/>
+        <MapContainer stops={stops} trams={trams} />
       </div>
     );
   }

@@ -1,29 +1,9 @@
 import React, { Component } from 'react';
-import { Map, TileLayer, Marker, Popup } from 'react-leaflet';
-import L from 'leaflet';
+import { Map, TileLayer } from 'react-leaflet';
+// import RotatedMarker from './RotatedMarker';
 import './mapcontainer.css';
-
-const tramIcon = new L.Icon({
-    iconUrl: '/img/tram-r.svg',
-    iconRetinaUrl: '/img/tram-r.svg',
-    iconAnchor: [5, 55],
-    popupAnchor: [10, -44],
-    iconSize: [25, 55],
-    shadowUrl: '/img/tram-shadow.png',
-    shadowSize: [68, 95],
-    shadowAnchor: [20, 92],
-});
-
-const stopIcon = new L.Icon({
-    iconUrl: '/img/stop.svg',
-    iconRetinaUrl: '/img/stop.svg',
-    iconAnchor: [5, 55],
-    popupAnchor: [10, -44],
-    iconSize: [25, 55],
-    shadowUrl: '/img/tram-shadow.png',
-    shadowSize: [68, 95],
-    shadowAnchor: [20, 92],
-});
+import Stop from './Stop';
+import Tram from './Tram';
 
 export default class MapContainer extends Component {
 
@@ -38,26 +18,13 @@ export default class MapContainer extends Component {
 
     displayStop(stop) {
         return (
-            <Marker key={stop.id} position={[stop.latitude, stop.longitude]} icon={stopIcon}>
-                <Popup>
-                    Przystanek {stop.name}
-                </Popup>
-            </Marker>
+            <Stop key={stop.id} info={stop}/>
         );
     }
 
     displayTram(tram) {
-
-        if (tram.deleted === true) {
-            return;
-        }
-
         return (
-            <Marker key={tram.id} position={[tram.latitude, tram.longitude]} icon={tramIcon}>
-                <Popup>
-                    Tramwaj nr {tram.name}
-                </Popup>
-            </Marker>
+            <Tram key={tram.id} info={tram}/>
         );
     }
 

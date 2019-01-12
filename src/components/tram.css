@@ -1,0 +1,21 @@
+.tram-name {
+    font-size: 1.5em;
+}
+
+.stops-list {
+    list-style: none;
+    overflow-y: auto;
+    max-height: 280px;
+}
+
+.stops-list li {
+    margin: 10px 0;
+}
+
+.delay-text {
+    color: red;
+}
+
+.nodelay-text {
+    color: green;
+}

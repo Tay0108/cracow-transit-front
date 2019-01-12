@@ -4,11 +4,14 @@
   "private": true,
   "dependencies": {
     "google-maps-react": "^2.0.2",
+    "js-joda": "^1.9.2",
     "leaflet": "^1.4.0",
+    "leaflet-rotatedmarker": "^0.2.0",
     "react": "^16.6.3",
     "react-dom": "^16.6.3",
     "react-leaflet": "^2.1.4",
-    "react-scripts": "2.1.1"
+    "react-scripts": "2.1.1",
+    "react-spinners": "^0.5.1"
   },
   "scripts": {
     "start": "react-scripts start",

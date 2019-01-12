@@ -28,7 +28,7 @@ class App extends Component {
   }
 
   getStops() {
-    fetch('http://localhost:8080/stopInfo/stops')
+    fetch('https://cracow-trams.herokuapp.com/stopInfo/stops')
       .then(response => response.json())
       .then(stops => {
         stops = stops.stops.filter(stop => stop.category === 'tram');
@@ -38,7 +38,7 @@ class App extends Component {
   }
 
   getTrams() {
-    fetch('http://localhost:8080/vehicleInfo/vehicles')
+    fetch('https://cracow-trams.herokuapp.com/vehicleInfo/vehicles')
       .then(response => response.json())
       .then(trams => {
         trams = trams.vehicles.filter((tram) => (!tram.deleted && tram.latitude !== undefined && tram.longitude !== undefined));

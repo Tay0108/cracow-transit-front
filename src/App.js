@@ -7,40 +7,53 @@ class App extends Component {
   constructor() {
     super();
     this.state = {};
+    this.normalizeMarker = this.normalizeMarker.bind(this);
     this.getStops = this.getStops.bind(this);
     this.getTrams = this.getTrams.bind(this);
   }
 
   componentDidMount() {
     this.getStops();
+    //this.setState({stops: this.state.stops.map((stop) => this.normalizeMarker(stop))});
     this.getTrams();
+    //this.setState({trams: this.state.trams.map((tram) => this.normalizeMarker(tram))});
     setInterval(() => this.getTrams(), 5000);
+    //this.setState({trams: this.state.trams.map((tram) => this.normalizeMarker(tram))});
+  }
+
+  
+  normalizeMarker(obj) {
+
+    if (obj.latitude !== undefined && obj.longitude !== undefined) {
+      obj.latitude /= (1000 * 3600);
+      obj.longitude /= (1000 * 3600);
+    }
+
+    return obj;
+
   }
 
   getStops() {
     fetch('http://localhost:8080/stopInfo/stops')
       .then(response => response.json())
-      .then(stops => this.setState({ stops: stops.stops }));
+      .then(stops => {
+        stops = stops.stops.map((stop) => this.normalizeMarker(stop));
+        this.setState({ stops: stops })
+      });
   }
 
   getTrams() {
     fetch('http://localhost:8080/vehicleInfo/vehicles')
        .then(response => response.json())
-       .then(trams => this.setState({ trams: trams.vehicles }));
+       .then(trams => 
+        {
+          trams = trams.vehicles.map((tram) => this.normalizeMarker(tram));
+          this.setState({ trams: trams });
+        });
   }
 
   render() {
 
-    function normalizeMarker(obj) {
-
-      if (obj.latitude !== undefined && obj.longitude !== undefined) {
-        obj.latitude /= (1000 * 3600);
-        obj.longitude /= (1000 * 3600);
-      }
-
-      return obj;
-
-    }
 
     if (this.state.stops === undefined) {
       return ('loading stops...');
@@ -50,8 +63,8 @@ class App extends Component {
       return ('loading trams...');
     }
 
-    let trams = this.state.trams.map((tram) => normalizeMarker(tram));
-    let stops = this.state.stops.map((stop) => normalizeMarker(stop));
+    let trams = this.state.trams;
+    let stops = this.state.stops;
 
     return (
       <div className="App">

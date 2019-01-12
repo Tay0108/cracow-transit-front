@@ -99,7 +99,14 @@ export default class Tram extends Component {
     }
 
     displayStop(stop) {
-        return <li key={stop.stop.id}>{stop.stop_seq_num}. {stop.stop.name}</li>;
+
+        let time = stop.actualTime;
+
+        if(this.state.delay != undefined && this.state.delay > 0) {
+            time = <span className="delay-text">{time}</span>;
+        }
+
+        return <li key={stop.stop.id}>{stop.stop_seq_num}. {stop.stop.name} ({time})</li>;
     }
 
     normalizeCoords(obj) {

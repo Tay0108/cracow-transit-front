@@ -25,17 +25,21 @@ class App extends Component {
 
   getTrams() {
     fetch('http://localhost:8080/vehicleInfo/vehicles')
-      .then(response => response.json())
-      .then(trams => this.setState({ trams: trams.vehicles }));
+       .then(response => response.json())
+       .then(trams => this.setState({ trams: trams.vehicles }));
   }
 
   render() {
 
     function normalizeMarker(obj) {
-      obj.latitude /= (1000 * 3600);
-      obj.longitude /= (1000 * 3600);
+
+      if (obj.latitude !== undefined && obj.longitude !== undefined) {
+        obj.latitude /= (1000 * 3600);
+        obj.longitude /= (1000 * 3600);
+      }
 
       return obj;
+
     }
 
     if (this.state.stops === undefined) {
@@ -51,7 +55,7 @@ class App extends Component {
 
     return (
       <div className="App">
-        <MapContainer stops={stops} trams={trams} />
+        <MapContainer stops={stops} trams={trams}/>
       </div>
     );
   }

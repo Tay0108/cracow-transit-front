@@ -30,7 +30,7 @@ class App extends Component {
   }
 
   getStops() {
-    fetch('\'https://cracow-trams.herokuapp.com/stopInfo/stops')
+    fetch('https://cracow-trams.herokuapp.com/stopInfo/stops')
       .then(response => response.json())
       .then(stops => {
         stops = stops.stops.filter(stop => stop.category === 'tram');
@@ -40,7 +40,7 @@ class App extends Component {
   }
 
   getTrams() {
-    fetch('\'https://cracow-trams.herokuapp.com/vehicleInfo/vehicles')
+    fetch('https://cracow-trams.herokuapp.com/vehicleInfo/vehicles')
       .then(response => response.json())
       .then(trams => {
         trams = trams.vehicles.filter((tram) => (!tram.deleted && tram.latitude !== undefined && tram.longitude !== undefined));
@@ -50,7 +50,7 @@ class App extends Component {
   }
 
   render() {
-<<<<<<< Updated upstream
+
 
     if (this.state.stops === undefined) {
       return ('loading stops...');
@@ -63,12 +63,12 @@ class App extends Component {
     let trams = this.state.trams;
     let stops = this.state.stops;
 
-=======
+
       const center = {
           lat: 51.5,
           lng: 0,
       };
->>>>>>> Stashed changes
+
     return (
       <div className="App">
         <MapContainer stops={stops} trams={trams} />

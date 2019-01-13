@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import MapContainer from './components/MapContainer';
+import ClipLoader from 'react-spinners';
 
 class App extends Component {
 
@@ -49,12 +50,8 @@ class App extends Component {
 
   render() {
 
-    if (this.state.stops === undefined) {
-      return ('loading stops...');
-    }
-
-    if (this.state.trams === undefined) {
-      return ('loading trams...');
+    if (this.state.stops === undefined || this.state.trams === undefined) {
+      return <ClipLoader/>;
     }
 
     let trams = this.state.trams;

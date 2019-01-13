@@ -74,7 +74,7 @@ export default class Tram extends Component {
             return '';
         }
         if (this.state.showPath) {
-            return <Polyline positions={this.state.path.wayPoints} color={this.state.path.color} />;
+            return <Polyline positions={this.state.path.wayPoints} color={'#4286f4'} weight={5} />;
         }
         return '';
     }
@@ -91,7 +91,7 @@ export default class Tram extends Component {
             if (this.state.nextStop != undefined) {
                 this.getDelay();
             }
-        }, 10000);
+        }, 5000);
     }
 
     hidePopup() {

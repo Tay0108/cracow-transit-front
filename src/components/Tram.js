@@ -91,7 +91,7 @@ export default class Tram extends Component {
             if (this.state.nextStop != undefined) {
                 this.getDelay();
             }
-        }, 5000);
+        }, 3000);
     }
 
     hidePopup() {

@@ -15,7 +15,7 @@ class App extends Component {
   componentDidMount() {
     this.getStops();
     this.getTrams();
-    setInterval(() => this.getTrams(), 10000);
+    setInterval(() => this.getTrams(), 5000);
   }
 
   normalizeMarker(obj) {

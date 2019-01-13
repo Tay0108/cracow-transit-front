@@ -50,8 +50,14 @@ class App extends Component {
 
   render() {
 
+    const centeredSpinner = {
+      position: 'fixed',
+      top: '50%',
+      left: '50%',
+    };
+
     if (this.state.stops === undefined || this.state.trams === undefined) {
-      return <ClipLoader/>;
+      return <ClipLoader css={centeredSpinner}/>;
     }
 
     let trams = this.state.trams;

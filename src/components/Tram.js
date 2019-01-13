@@ -106,7 +106,7 @@ export default class Tram extends Component {
             time = <span className="delay-text">{time}</span>;
         }
 
-        return <li key={stop.stop.id}>{stop.stop_seq_num}. {stop.stop.name} ({time})</li>;
+        return <li key={stop.stop.id}><span className="stop-num">{stop.stop_seq_num}</span> {stop.stop.name} ({time})</li>;
     }
 
     normalizeCoords(obj) {
@@ -147,8 +147,8 @@ export default class Tram extends Component {
                 <Marker key={this.props.info.id} position={[this.props.info.latitude, this.props.info.longitude]} icon={tramIcon} onClick={this.showPopup}>
                     <Popup onClose={this.hidePopup}>
                         <h2 className="tram-name">{this.props.info.name}</h2>
-                        Opóźnienie: {delay}<br />
-                        Kolejne przystanki:
+                        <span className="sub-title">Opóźnienie: {delay}<br /></span>
+                        <span className="sub-title">Kolejne przystanki:</span>
                         <ul className="stops-list">
                             {this.state.stops.map(stop => this.displayStop(stop))}
                         </ul>

@@ -67,7 +67,7 @@ export default class Stop extends Component {
                 <Marker position={[this.props.info.latitude, this.props.info.longitude]} icon={stopIcon} onClick={this.showPopup}>
                     <Popup className="stop-popup">
                         <h2 className="stop-name">{this.props.info.name}</h2>
-                        Planowe odjazdy:
+                        <span className="sub-title">Planowe odjazdy:</span>
                         <ul className="passages-list">
                             {this.state.passages.map(passage => this.displayPassage(passage))}
                         </ul>

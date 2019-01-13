@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
 import MapContainer from './components/MapContainer';
-import ClipLoader from 'react-spinners';
 
 class App extends Component {
 
@@ -49,15 +48,8 @@ class App extends Component {
   }
 
   render() {
-
-    const centeredSpinner = {
-      position: 'fixed',
-      top: '50%',
-      left: '50%',
-    };
-
     if (this.state.stops === undefined || this.state.trams === undefined) {
-      return <ClipLoader css={centeredSpinner}/>;
+      return 'Loading...';
     }
 
     let trams = this.state.trams;

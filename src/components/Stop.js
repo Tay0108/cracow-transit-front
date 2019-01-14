@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import './stop.css';
-import { Marker, Popup } from 'react-leaflet';
+import {Marker, Popup} from 'react-leaflet';
 import L from 'leaflet';
-import { LocalTime, ChronoUnit } from 'js-joda';
-import { ClipLoader } from 'react-spinners';
+import {LocalTime, ChronoUnit} from 'js-joda';
+import {ClipLoader} from 'react-spinners';
 
 const stopIcon = new L.Icon({
     iconUrl: '/img/stop.svg',
@@ -21,17 +21,13 @@ export default class Stop extends Component {
         this.showPopup = this.showPopup.bind(this);
     }
 
-    componentDidMount() {
-
-    }
-
     getPassages() {
         fetch('https://cracow-trams.herokuapp.com/passageInfo/stops/' + this.props.info.shortName)
             .then(response => response.json())
             .then(passages => {
                 passages = passages.actual;
                 passages = passages.filter((passage) => (passage.status = 'PREDICTED' && passage.actualTime !== null && passage.actualTime !== undefined && passage.plannedTime !== null && passage.plannedTime !== undefined));
-                this.setState({ passages: passages })
+                this.setState({passages: passages})
             });
     }
 
@@ -42,7 +38,10 @@ export default class Stop extends Component {
         let delay = plannedTime.until(actualTime, ChronoUnit.MINUTES);
 
         return (
-            <li key={passage.passageid}><div className="passage-number">{passage.patternText}</div> w kierunku {passage.direction} o {passage.plannedTime} <span className="delay-text">{delay > 0 ? `(+${delay}min)` : ''}</span></li>
+            <li key={passage.passageid}>
+                <div className="passage-number">{passage.patternText}</div>
+                 w kierunku {passage.direction} o {passage.plannedTime} <span
+                className="delay-text">{delay > 0 ? `(+${delay}min)` : ''}</span></li>
         );
     }
 
@@ -56,24 +55,30 @@ export default class Stop extends Component {
 
         if (this.state.passages == undefined) {
             return (
-                <Marker position={[this.props.info.latitude, this.props.info.longitude]} icon={stopIcon} onClick={this.showPopup}>
-                    <Popup>
-                        <ClipLoader />
+                <Marker position={[this.props.info.latitude, this.props.info.longitude]} icon={stopIcon}
+                        onClick={this.showPopup}>
+                    <Popup className="stop-popup">
+                        <ClipLoader/>
                     </Popup>
                 </Marker>
             );
         }
-            return (
-                <Marker position={[this.props.info.latitude, this.props.info.longitude]} icon={stopIcon} onClick={this.showPopup}>
-                    <Popup className="stop-popup">
-                        <h2 className="stop-name">{this.props.info.name}</h2>
-                        <span className="sub-title">Planowe odjazdy:</span>
-                        <ul className="passages-list">
-                            {this.state.passages.map(passage => this.displayPassage(passage))}
-                        </ul>
-                    </Popup>
-                </Marker>
-            );
+
+        let clutter = this.props.info.clutter;
+
+        return (
+            <Marker position={[this.props.info.latitude, this.props.info.longitude]} icon={stopIcon}
+                    onClick={this.showPopup}>
+                <Popup className="stop-popup" maxWidth={350}>
+                    <h2 className="stop-name">{this.props.info.name}</h2>
+                    <span className="sub-title">Zatłoczenie: {clutter}<br/></span>
+                    <span className="sub-title">Planowe odjazdy:</span>
+                    <ul className="passages-list">
+                        {this.state.passages.map(passage => this.displayPassage(passage))}
+                    </ul>
+                </Popup>
+            </Marker>
+        );
     }
 
 }

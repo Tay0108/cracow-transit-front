@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import './tram.css';
-import { Marker, Popup, Polyline } from 'react-leaflet';
+import {Marker, Popup, Polyline} from 'react-leaflet';
 import L from 'leaflet';
-import { ClipLoader } from 'react-spinners';
-import { LocalTime, ChronoUnit } from 'js-joda';
+import {ClipLoader} from 'react-spinners';
+import {LocalTime, ChronoUnit} from 'js-joda';
 
 const tramIcon = new L.Icon({
     iconUrl: '/img/tram.svg',
@@ -28,18 +28,18 @@ export default class Tram extends Component {
     }
 
     getWaypoints() {
-        fetch('https://cracow-trams.herokuapp.com/pathInfo/vehicle/' + this.props.info.id)
+        fetch('http://localhost:8080/pathInfo/vehicle/' + this.props.info.id)
             .then(response => response.json())
             .then(path => {
                 path = path.paths[0];
                 let wayPoints = path.wayPoints.map(obj => this.normalizeCoords(obj));
                 path.wayPoints = wayPoints;
-                this.setState({ path: path })
+                this.setState({path: path})
             });
     }
 
     getStops() {
-        fetch('https://cracow-trams.herokuapp.com/tripInfo/tripPassages/' + this.props.info.tripId)
+        fetch('http://localhost:8080/tripInfo/tripPassages/' + this.props.info.tripId)
             .then(response => response.json())
             .then(obj => {
                 let stops = [...new Set(obj.actual)]; // because some stops were duplicated
@@ -52,7 +52,7 @@ export default class Tram extends Component {
     }
 
     getDelay() {
-        fetch('https://cracow-trams.herokuapp.com/passageInfo/stops/' + this.state.nextStop)
+        fetch('http://localhost:8080/passageInfo/stops/' + this.state.nextStop)
             .then(response => response.json())
             .then(passages => {
 
@@ -64,7 +64,7 @@ export default class Tram extends Component {
                     let plannedTime = LocalTime.parse(passage.plannedTime);
 
                     let delay = plannedTime.until(actualTime, ChronoUnit.MINUTES);
-                    this.setState({ delay: delay })
+                    this.setState({delay: delay})
                 }
             });
     }
@@ -74,13 +74,13 @@ export default class Tram extends Component {
             return '';
         }
         if (this.state.showPath) {
-            return <Polyline positions={this.state.path.wayPoints} color={'#4286f4'} weight={5} />;
+            return <Polyline positions={this.state.path.wayPoints} color={'#4286f4'} weight={5}/>;
         }
         return '';
     }
 
     showPopup() {
-        this.setState({ showPath: true });
+        this.setState({showPath: true});
         this.getWaypoints();
         this.getStops();
         if (this.state.nextStop != undefined) {
@@ -95,18 +95,19 @@ export default class Tram extends Component {
     }
 
     hidePopup() {
-        this.setState({ showPath: false });
+        this.setState({showPath: false});
     }
 
     displayStop(stop) {
 
         let time = stop.actualTime;
 
-        if(this.state.delay != undefined && this.state.delay > 0) {
+        if (this.state.delay != undefined && this.state.delay > 0) {
             time = <span className="delay-text">{time}</span>;
         }
 
-        return <li key={stop.stop.id}><span className="stop-num">{stop.stop_seq_num}</span> {stop.stop.name} ({time})</li>;
+        return <li key={stop.stop.id}><span className="stop-num">{stop.stop_seq_num}</span> {stop.stop.name} ({time})
+        </li>;
     }
 
     normalizeCoords(obj) {
@@ -121,33 +122,36 @@ export default class Tram extends Component {
 
         if (this.state.path == undefined || this.state.stops == undefined) {
             return (
-                <Marker key={this.props.info.id} position={[this.props.info.latitude, this.props.info.longitude]} icon={tramIcon} onClick={this.showPopup}>
+                <Marker key={this.props.info.id} position={[this.props.info.latitude, this.props.info.longitude]}
+                        icon={tramIcon} onClick={this.showPopup}>
                     <Popup>
-                        <ClipLoader />
+                        <ClipLoader/>
                     </Popup>
                 </Marker>
             );
         }
 
         let delay = 'obliczam...';
+        let clutter = this.props.info.clutter;
 
         if (this.state.delay != undefined) {
             delay = this.state.delay;
 
             if (delay > 0) {
                 delay = <span className="delay-text">{delay} min</span>;
-            }
-            else {
+            } else {
                 delay = <span className="nodelay-text">brak</span>;
             }
         }
 
         return (
             <>
-                <Marker key={this.props.info.id} position={[this.props.info.latitude, this.props.info.longitude]} icon={tramIcon} onClick={this.showPopup}>
+                <Marker key={this.props.info.id} position={[this.props.info.latitude, this.props.info.longitude]}
+                        icon={tramIcon} onClick={this.showPopup}>
                     <Popup onClose={this.hidePopup}>
                         <h2 className="tram-name">{this.props.info.name}</h2>
-                        <span className="sub-title">Opóźnienie: {delay}<br /></span>
+                        <span className="sub-title">Opóźnienie: {delay}<br/></span>
+                        <span className="sub-title">Zatłoczenie: {clutter}<br/></span>
                         <span className="sub-title">Kolejne przystanki:</span>
                         <ul className="stops-list">
                             {this.state.stops.map(stop => this.displayStop(stop))}

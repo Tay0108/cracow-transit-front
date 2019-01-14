@@ -24,6 +24,10 @@
     line-height: 22px;
 }
 
+.sub-title {
+    font-size: 1.2em;
+}
+
 .delay-text {
     color: red;
 }

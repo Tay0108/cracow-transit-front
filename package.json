@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "google-maps-react": "^2.0.2",
     "js-joda": "^1.9.2",
     "leaflet": "^1.4.0",
     "leaflet-rotatedmarker": "^0.2.0",
@@ -15,7 +14,7 @@
     "serve": "^10.1.1"
   },
   "scripts": {
-    "start": "serve -s build",
+    "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",

@@ -71,7 +71,7 @@ export default class Stop extends Component {
                     onClick={this.showPopup}>
                 <Popup className="stop-popup" maxWidth={350}>
                     <h2 className="stop-name">{this.props.info.name}</h2>
-                    <span className="sub-title">Zatłoczenie: {clutter}<br/></span>
+                    <span className="sub-title">Zatłoczenie: {clutter} / 4<br/></span>
                     <span className="sub-title">Planowe odjazdy:</span>
                     <ul className="passages-list">
                         {this.state.passages.map(passage => this.displayPassage(passage))}

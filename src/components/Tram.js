@@ -51,6 +51,14 @@ export default class Tram extends Component {
             });
     }
 
+    getClutter() {
+        fetch('http://localhost:8080/stopInfo/stops/' + this.state.nextStop)
+            .then(response => response.json())
+            .then(nextStop => {
+                console.log(nextStop.clutter);
+            });
+    }
+
     getDelay() {
         fetch('http://localhost:8080/passageInfo/stops/' + this.state.nextStop)
             .then(response => response.json())
@@ -85,11 +93,13 @@ export default class Tram extends Component {
         this.getStops();
         if (this.state.nextStop != undefined) {
             this.getDelay();
+            this.getClutter();
         }
         setInterval(() => {
             this.getStops();
             if (this.state.nextStop != undefined) {
                 this.getDelay();
+                this.getClutter();
             }
         }, 3000);
     }

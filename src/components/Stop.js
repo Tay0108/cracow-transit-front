@@ -19,6 +19,7 @@ export default class Stop extends Component {
         this.displayPassage = this.displayPassage.bind(this);
         this.getPassages = this.getPassages.bind(this);
         this.showPopup = this.showPopup.bind(this);
+        this.getClutter = this.getClutter.bind(this);
     }
 
     getPassages() {
@@ -29,6 +30,12 @@ export default class Stop extends Component {
                 passages = passages.filter((passage) => (passage.status = 'PREDICTED' && passage.actualTime !== null && passage.actualTime !== undefined && passage.plannedTime !== null && passage.plannedTime !== undefined));
                 this.setState({passages: passages})
             });
+    }
+
+    getClutter() {
+        fetch('http://localhost:8080/clutterInfo/stops/' + this.props.info.shortName)
+            .then(response => response.json())
+            .then(clutter => this.setState({ clutter: clutter}));
     }
 
     displayPassage(passage) {
@@ -47,7 +54,11 @@ export default class Stop extends Component {
 
     showPopup() {
         this.getPassages();
-        setInterval(() => this.getPassages(), 60000);
+        this.getClutter();
+        setInterval(() => {
+            this.getPassages();
+            this.getClutter();
+        }, 60000);
 
     }
 
@@ -64,14 +75,18 @@ export default class Stop extends Component {
             );
         }
 
-        let clutter = this.props.info.clutter;
+        let clutter = 'obliczam...';
+        
+        if(this.state.clutter != undefined) {
+            clutter = this.state.clutter + '/4';
+        }
 
         return (
             <Marker position={[this.props.info.latitude, this.props.info.longitude]} icon={stopIcon}
                     onClick={this.showPopup}>
                 <Popup className="stop-popup" maxWidth={350}>
                     <h2 className="stop-name">{this.props.info.name}</h2>
-                    <span className="sub-title">Zatłoczenie: {clutter} / 4<br/></span>
+                    <span className="sub-title">Waga: {clutter}<br/></span>
                     <span className="sub-title">Planowe odjazdy:</span>
                     <ul className="passages-list">
                         {this.state.passages.map(passage => this.displayPassage(passage))}

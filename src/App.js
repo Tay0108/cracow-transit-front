@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import MapContainer from './components/MapContainer';
+import { BarLoader } from 'react-spinners';
 
 class App extends Component {
 
@@ -49,7 +50,17 @@ class App extends Component {
 
   render() {
     if (this.state.stops === undefined || this.state.trams === undefined) {
-      return 'Loading...';
+      return (
+        <div className="loader-wrapper">
+          <div className="loader-box">
+            <img src="img/tram.svg" className="app-logo" />
+            <div>
+              <h1 className="app-title">Cracow Trams</h1>
+              <BarLoader widthUnit={"%"} width={100} />
+            </div>
+          </div>
+        </div>
+      );
     }
 
     let trams = this.state.trams;

@@ -46,8 +46,11 @@ export default class Tram extends Component {
 
                 this.setState({
                     stops: stops,
-                    nextStop: stops[0].stop.shortName,
                 });
+
+                if(stops.length > 0) {
+                    this.setState({nextStop: stops[0].stop.shortName});
+                }
             });
     }
 
@@ -114,7 +117,7 @@ export default class Tram extends Component {
             time = <span className="delay-text">{time}</span>;
         }
 
-        return <li key={stop.stop.id}><span className="stop-num">{stop.stop_seq_num}</span> {stop.stop.name} ({time})
+        return <li key={stop.stop_seq_num}><span className="stop-num">{stop.stop_seq_num}</span> {stop.stop.name} ({time})
         </li>;
     }
 
@@ -144,7 +147,7 @@ export default class Tram extends Component {
         let clutter = 'obliczam...';
 
         if (this.state.clutter != undefined) {
-            clutter = this.state.clutter * 100 / 4  + '%';
+            clutter = (this.state.clutter * 100 / 4).toFixed(2)  + '%';
         }
 
         if (this.state.delay != undefined) {

@@ -1,10 +1,9 @@
-import React, { Component } from 'react';
-import './App.css';
-import MapContainer from './components/MapContainer';
-import { BarLoader } from 'react-spinners';
+import React, { Component } from "react";
+import "./App.css";
+import MapContainer from "./components/MapContainer";
+import { BarLoader } from "react-spinners";
 
 class App extends Component {
-
   constructor() {
     super();
     this.state = {};
@@ -22,63 +21,77 @@ class App extends Component {
 
   normalizeMarker(obj) {
     if (obj.latitude !== undefined && obj.longitude !== undefined) {
-      obj.latitude /= (1000.0 * 3600.0);
-      obj.longitude /= (1000.0 * 3600.0);
+      obj.latitude /= 1000.0 * 3600.0;
+      obj.longitude /= 1000.0 * 3600.0;
     }
 
     return obj;
   }
 
   getTramStops() {
-    fetch('http://localhost:8080/tram/stopInfo/stops')
+    fetch("http://localhost:8080/tram/stopInfo/stops")
       .then(response => response.json())
       .then(stops => {
-        stops = stops.stops.filter(stop => stop.category === 'tram');
-        stops = stops.map((stop) => this.normalizeMarker(stop));
-        this.setState({ stops: stops })
+        stops = stops.stops.filter(stop => stop.category === "tram");
+        stops = stops.map(stop => this.normalizeMarker(stop));
+        this.setState({ stops: stops });
       });
   }
 
   getTrams() {
-    fetch('http://localhost:8080/tram/vehicleInfo/vehicles')
+    fetch("http://localhost:8080/tram/vehicleInfo/vehicles")
       .then(response => response.json())
       .then(trams => {
-        if(trams.status === 500) {
-          this.setState({trams: []});
+        if (trams.status === 500) {
+          this.setState({ trams: [] });
           return;
         }
-        trams = trams.vehicles.filter((tram) => (!tram.deleted && tram.latitude !== undefined && tram.longitude !== undefined));
-        trams = trams.map((tram) => this.normalizeMarker(tram));
+        trams = trams.vehicles.filter(
+          tram =>
+            !tram.deleted &&
+            tram.latitude !== undefined &&
+            tram.longitude !== undefined
+        );
+        trams = trams.map(tram => this.normalizeMarker(tram));
         this.setState({ trams: trams });
       });
   }
 
   getBusStops() {
-    fetch('http://localhost:8080/bus/stopInfo/stops')
-        .then(response => response.json())
-        .then(stops => {
-          stops = stops.stops.filter(stop => stop.category === 'buss');
-          stops = stops.map((stop) => this.normalizeMarker(stop));
-          this.setState({ stops: stops })
-        });
+    fetch("http://localhost:8080/bus/stopInfo/stops")
+      .then(response => response.json())
+      .then(stops => {
+        stops = stops.stops.filter(stop => stop.category === "buss");
+        stops = stops.map(stop => this.normalizeMarker(stop));
+        this.setState({ stops: stops });
+      });
   }
 
   getBuses() {
-    fetch('http://localhost:8080/bus/vehicleInfo/vehicles')
-        .then(response => response.json())
-        .then(buses => {
-          if(buses.status === 500) {
-            this.setState({buses: []});
-            return;
-          }
-          buses = buses.vehicles.filter((bus) => (!bus.deleted && bus.latitude !== undefined && bus.longitude !== undefined));
-          buses = buses.map((tram) => this.normalizeMarker(tram));
-          this.setState({ buses: buses });
-        });
+    fetch("http://localhost:8080/bus/vehicleInfo/vehicles")
+      .then(response => response.json())
+      .then(buses => {
+        if (buses.status === 500) {
+          this.setState({ buses: [] });
+          return;
+        }
+        buses = buses.vehicles.filter(
+          bus =>
+            !bus.deleted &&
+            bus.latitude !== undefined &&
+            bus.longitude !== undefined
+        );
+        buses = buses.map(tram => this.normalizeMarker(tram));
+        this.setState({ buses: buses });
+      });
   }
 
   render() {
-    if (this.state.stops === undefined || this.state.trams === undefined || this.state.buses === undefined) {
+    if (
+      this.state.stops === undefined ||
+      this.state.trams === undefined ||
+      this.state.buses === undefined
+    ) {
       return (
         <div className="loader-wrapper">
           <div className="loader-box">

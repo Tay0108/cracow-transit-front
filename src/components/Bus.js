@@ -1,17 +1,17 @@
 import React, { Component } from 'react';
-import './tram.css';
+import './bus.css';
 import { Marker, Popup, Polyline } from 'react-leaflet';
 import L from 'leaflet';
 import { ClipLoader } from 'react-spinners';
 import { LocalTime, ChronoUnit } from 'js-joda';
 
-const tramIcon = new L.Icon({
-    iconUrl: '/img/tram.svg',
-    iconRetinaUrl: '/img/tram.svg',
+const busIcon = new L.Icon({
+    iconUrl: '/img/bus.svg',
+    iconRetinaUrl: '/img/bus.svg',
     iconSize: [25, 25],
 });
 
-export default class Tram extends Component {
+export default class Bus extends Component {
 
     constructor(props) {
         super(props);
@@ -28,7 +28,7 @@ export default class Tram extends Component {
     }
 
     getWaypoints() {
-        fetch('http://localhost:8080/tram/pathInfo/vehicle/' + this.props.info.id)
+        fetch('http://localhost:8080/bus/pathInfo/vehicle/' + this.props.info.id)
             .then(response => response.json())
             .then(path => {
                 path = path.paths[0];
@@ -39,7 +39,7 @@ export default class Tram extends Component {
     }
 
     getStops() {
-        fetch('http://localhost:8080/tram/tripInfo/tripPassages/' + this.props.info.tripId)
+        fetch('http://localhost:8080/bus/tripInfo/tripPassages/' + this.props.info.tripId)
             .then(response => response.json())
             .then(obj => {
                 let stops = obj.actual;
@@ -55,13 +55,13 @@ export default class Tram extends Component {
     }
 
     getClutter() {
-        fetch('http://localhost:8080/tram/clutterInfo/vehicles/' + this.props.info.tripId)
+        fetch('http://localhost:8080/bus/clutterInfo/vehicles/' + this.props.info.tripId)
             .then(response => response.json())
             .then(clutter => this.setState({ clutter: clutter}));
     }
 
     getDelay() {
-        fetch('http://localhost:8080/tram/passageInfo/stops/' + this.state.nextStop)
+        fetch('http://localhost:8080/bus/passageInfo/stops/' + this.state.nextStop)
             .then(response => response.json())
             .then(passages => {
 
@@ -90,17 +90,17 @@ export default class Tram extends Component {
 
     showPopup() {
         this.setState({ showPath: true });
-        this.getWaypoints();
+        // this.getWaypoints();
         this.getStops();
         if (this.state.nextStop !== undefined) {
             this.getDelay();
-            this.getClutter();
+            // this.getClutter();
         }
         setInterval(() => {
             this.getStops();
             if (this.state.nextStop !== undefined) {
                 this.getDelay();
-                this.getClutter();
+               // this.getClutter();
             }
         }, 3000);
     }
@@ -131,10 +131,10 @@ export default class Tram extends Component {
 
     render() {
 
-        if (this.state.path === undefined || this.state.stops === undefined) {
+        if (this.state.stops === undefined) { // || this.state.path === undefined
             return (
                 <Marker key={this.props.info.id} position={[this.props.info.latitude, this.props.info.longitude]}
-                    icon={tramIcon} onClick={this.showPopup}>
+                        icon={busIcon} onClick={this.showPopup}>
                     <Popup>
                         <ClipLoader />
                     </Popup>
@@ -163,9 +163,9 @@ export default class Tram extends Component {
         return (
             <>
                 <Marker key={this.props.info.id} position={[this.props.info.latitude, this.props.info.longitude]}
-                    icon={tramIcon} onClick={this.showPopup}>
+                        icon={busIcon} onClick={this.showPopup}>
                     <Popup onClose={this.hidePopup}>
-                        <h2 className="tram-name">{this.props.info.name}</h2>
+                        <h2 className="bus-name">{this.props.info.name}</h2>
                         <span className="sub-title">Opóźnienie: {delay}<br /></span>
                         <span className="sub-title">Zatłoczenie: {clutter}<br /></span>
                         <span className="sub-title">Kolejne przystanki:</span>

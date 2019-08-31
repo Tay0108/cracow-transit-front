@@ -16,6 +16,7 @@ class App extends Component {
   componentDidMount() {
     this.getTramStops();
     this.getTrams();
+    this.getBuses();
     setInterval(() => this.getTrams(), 5000);
   }
 
@@ -29,7 +30,7 @@ class App extends Component {
   }
 
   getTramStops() {
-    fetch('http://localhost:8080/stopInfo/stops')
+    fetch('http://localhost:8080/tram/stopInfo/stops')
       .then(response => response.json())
       .then(stops => {
         stops = stops.stops.filter(stop => stop.category === 'tram');
@@ -39,7 +40,7 @@ class App extends Component {
   }
 
   getTrams() {
-    fetch('http://localhost:8080/vehicleInfo/vehicles')
+    fetch('http://localhost:8080/tram/vehicleInfo/vehicles')
       .then(response => response.json())
       .then(trams => {
         if(trams.status === 500) {
@@ -53,15 +54,31 @@ class App extends Component {
   }
 
   getBusStops() {
-
+    fetch('http://localhost:8080/bus/stopInfo/stops')
+        .then(response => response.json())
+        .then(stops => {
+          stops = stops.stops.filter(stop => stop.category === 'buss');
+          stops = stops.map((stop) => this.normalizeMarker(stop));
+          this.setState({ stops: stops })
+        });
   }
 
   getBuses() {
-
+    fetch('http://localhost:8080/bus/vehicleInfo/vehicles')
+        .then(response => response.json())
+        .then(buses => {
+          if(buses.status === 500) {
+            this.setState({buses: []});
+            return;
+          }
+          buses = buses.vehicles.filter((bus) => (!bus.deleted && bus.latitude !== undefined && bus.longitude !== undefined));
+          buses = buses.map((tram) => this.normalizeMarker(tram));
+          this.setState({ buses: buses });
+        });
   }
 
   render() {
-    if (this.state.stops === undefined || this.state.trams === undefined) {
+    if (this.state.stops === undefined || this.state.trams === undefined || this.state.buses === undefined) {
       return (
         <div className="loader-wrapper">
           <div className="loader-box">
@@ -75,12 +92,13 @@ class App extends Component {
       );
     }
 
-    let trams = this.state.trams;
-    let stops = this.state.stops;
+    const trams = this.state.trams;
+    const stops = this.state.stops;
+    const buses = this.state.buses;
 
     return (
       <div className="App">
-        <MapContainer stops={stops} trams={trams} />
+        <MapContainer stops={stops} trams={trams} buses={buses} />
       </div>
     );
   }

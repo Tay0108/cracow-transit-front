@@ -65,7 +65,7 @@ export default class Tram extends Component {
             .then(response => response.json())
             .then(passages => {
 
-                let passage = passages.actual.filter(passage => (passage.vehicleId == this.props.info.id))[0];
+                let passage = passages.actual.filter(passage => (passage.vehicleId === this.props.info.id))[0];
 
                 if (passage != null) {
 
@@ -79,7 +79,7 @@ export default class Tram extends Component {
     }
 
     displayPath() {
-        if (this.state.path == undefined || this.state.stops == undefined) {
+        if (this.state.path === undefined || this.state.stops === undefined) {
             return '';
         }
         if (this.state.showPath) {
@@ -92,13 +92,13 @@ export default class Tram extends Component {
         this.setState({ showPath: true });
         this.getWaypoints();
         this.getStops();
-        if (this.state.nextStop != undefined) {
+        if (this.state.nextStop !== undefined) {
             this.getDelay();
             this.getClutter();
         }
         setInterval(() => {
             this.getStops();
-            if (this.state.nextStop != undefined) {
+            if (this.state.nextStop !== undefined) {
                 this.getDelay();
                 this.getClutter();
             }
@@ -113,7 +113,7 @@ export default class Tram extends Component {
 
         let time = stop.actualTime;
 
-        if (this.state.delay != undefined && this.state.delay > 0) {
+        if (this.state.delay !== undefined && this.state.delay > 0) {
             time = <span className="delay-text">{time}</span>;
         }
 
@@ -131,7 +131,7 @@ export default class Tram extends Component {
 
     render() {
 
-        if (this.state.path == undefined || this.state.stops == undefined) {
+        if (this.state.path === undefined || this.state.stops === undefined) {
             return (
                 <Marker key={this.props.info.id} position={[this.props.info.latitude, this.props.info.longitude]}
                     icon={tramIcon} onClick={this.showPopup}>
@@ -146,11 +146,11 @@ export default class Tram extends Component {
 
         let clutter = 'obliczam...';
 
-        if (this.state.clutter != undefined) {
+        if (this.state.clutter !== undefined) {
             clutter = (this.state.clutter * 100 / 4).toFixed(2)  + '%';
         }
 
-        if (this.state.delay != undefined) {
+        if (this.state.delay !== undefined) {
             delay = this.state.delay;
 
             if (delay > 0) {

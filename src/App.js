@@ -9,12 +9,12 @@ class App extends Component {
     super();
     this.state = {};
     this.normalizeMarker = this.normalizeMarker.bind(this);
-    this.getStops = this.getStops.bind(this);
+    this.getTramStops = this.getTramStops.bind(this);
     this.getTrams = this.getTrams.bind(this);
   }
 
   componentDidMount() {
-    this.getStops();
+    this.getTramStops();
     this.getTrams();
     setInterval(() => this.getTrams(), 5000);
   }
@@ -28,7 +28,7 @@ class App extends Component {
     return obj;
   }
 
-  getStops() {
+  getTramStops() {
     fetch('http://localhost:8080/stopInfo/stops')
       .then(response => response.json())
       .then(stops => {
@@ -42,10 +42,22 @@ class App extends Component {
     fetch('http://localhost:8080/vehicleInfo/vehicles')
       .then(response => response.json())
       .then(trams => {
+        if(trams.status === 500) {
+          this.setState({trams: []});
+          return;
+        }
         trams = trams.vehicles.filter((tram) => (!tram.deleted && tram.latitude !== undefined && tram.longitude !== undefined));
         trams = trams.map((tram) => this.normalizeMarker(tram));
         this.setState({ trams: trams });
       });
+  }
+
+  getBusStops() {
+
+  }
+
+  getBuses() {
+
   }
 
   render() {

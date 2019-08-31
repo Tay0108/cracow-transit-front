@@ -64,7 +64,7 @@ export default class Stop extends Component {
 
     render() {
 
-        if (this.state.passages == undefined) {
+        if (this.state.passages === undefined) {
             return (
                 <Marker position={[this.props.info.latitude, this.props.info.longitude]} icon={stopIcon}
                         onClick={this.showPopup}>
@@ -77,7 +77,7 @@ export default class Stop extends Component {
 
         let clutter = 'obliczam...';
         
-        if(this.state.clutter != undefined) {
+        if(this.state.clutter !== undefined) {
             clutter = this.state.clutter + '/4';
         }
 

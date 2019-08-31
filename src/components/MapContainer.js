@@ -4,6 +4,7 @@ import { Map, TileLayer } from 'react-leaflet';
 import './mapcontainer.css';
 import Stop from './Stop';
 import Tram from './Tram';
+import Bus from './Bus';
 
 export default class MapContainer extends Component {
 
@@ -28,6 +29,12 @@ export default class MapContainer extends Component {
         );
     }
 
+    displayBus(bus) {
+        return (
+            <Bus key={bus.id} info={bus}/>
+        );
+    }
+
     render() {
 
         const position = [this.state.lat, this.state.lng];
@@ -40,6 +47,7 @@ export default class MapContainer extends Component {
                 />
                 {this.props.stops.map((stop) => this.displayStop(stop))}
                 {this.props.trams.map((tram) => this.displayTram(tram))}
+                {this.props.buses.map((bus) => this.displayBus(bus))}
             </Map>
         );
     }

@@ -23,7 +23,7 @@ export default class Stop extends Component {
     }
 
     getPassages() {
-        fetch('https://cracow-trams.herokuapp.com/passageInfo/stops/' + this.props.info.shortName)
+        fetch('http://localhost:8080/tram/passageInfo/stops/' + this.props.info.shortName)
             .then(response => response.json())
             .then(passages => {
                 passages = passages.actual;
@@ -33,7 +33,7 @@ export default class Stop extends Component {
     }
 
     getClutter() {
-        fetch('http://localhost:8080/clutterInfo/stops/' + this.props.info.shortName)
+        fetch('http://localhost:8080/tram/clutterInfo/stops/' + this.props.info.shortName)
             .then(response => response.json())
             .then(clutter => this.setState({ clutter: clutter}));
     }

@@ -1,10 +1,10 @@
 import React, { Component } from "react";
 import { Map, TileLayer } from "react-leaflet";
-// import RotatedMarker from './RotatedMarker';
-import "./mapcontainer.css";
-import Stop from "./Stop";
-import Tram from "./Tram";
-import Bus from "./Bus";
+import "./map-container.css";
+import TramStop from "../TramStop/TramStop";
+import Tram from "../Tram/Tram";
+import Bus from "../Bus/Bus";
+import BusStop from "../BusStop/BusStop";
 
 export default class MapContainer extends Component {
   constructor(props) {
@@ -16,12 +16,16 @@ export default class MapContainer extends Component {
     };
   }
 
-  displayStop(stop) {
-    return <Stop key={stop.id} info={stop} />;
+  displayTramStop(tramStop) {
+    return <TramStop key={tramStop.id} info={tramStop} />;
   }
 
   displayTram(tram) {
     return <Tram key={tram.id} info={tram} />;
+  }
+
+  displayBusStop(busStop) {
+    return <BusStop key={busStop.id} info={busStop} />;
   }
 
   displayBus(bus) {
@@ -37,8 +41,9 @@ export default class MapContainer extends Component {
           attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        {this.props.stops.map(stop => this.displayStop(stop))}
+        {this.props.tramStops.map(stop => this.displayTramStop(stop))}
         {this.props.trams.map(tram => this.displayTram(tram))}
+        {this.props.busStops.map(stop => this.displayBusStop(stop))}
         {this.props.buses.map(bus => this.displayBus(bus))}
       </Map>
     );

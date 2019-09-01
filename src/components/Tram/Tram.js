@@ -1,17 +1,18 @@
 import React, { Component } from "react";
-import "./bus.css";
-import { Marker, Popup, Polyline } from "react-leaflet";
+import "./tram.css";
+import { Marker, Polyline, Popup } from "react-leaflet";
 import L from "leaflet";
 import { ClipLoader } from "react-spinners";
-import { LocalTime, ChronoUnit } from "js-joda";
+import { ChronoUnit, LocalTime } from "js-joda";
+import API_HOST from "../../API_HOST";
 
-const busIcon = new L.Icon({
-  iconUrl: "/img/bus.svg",
-  iconRetinaUrl: "/img/bus.svg",
+const tramIcon = new L.Icon({
+  iconUrl: "/img/tram.svg",
+  iconRetinaUrl: "/img/tram.svg",
   iconSize: [25, 25]
 });
 
-export default class Bus extends Component {
+export default class Tram extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -27,27 +28,23 @@ export default class Bus extends Component {
   }
 
   getWaypoints() {
-    fetch("http://localhost:8080/bus/pathInfo/vehicle/" + this.props.info.id)
+    fetch(`${API_HOST}/tram/pathInfo/vehicle/${this.props.info.id}`)
       .then(response => response.json())
       .then(path => {
         path = path.paths[0];
-        let wayPoints = path.wayPoints.map(obj => this.normalizeCoords(obj));
-        path.wayPoints = wayPoints;
+        path.wayPoints = path.wayPoints.map(obj => this.normalizeCoords(obj));
         this.setState({ path: path });
       });
   }
 
   getStops() {
-    fetch(
-      "http://localhost:8080/bus/tripInfo/tripPassages/" +
-        this.props.info.tripId
-    )
+    fetch(`${API_HOST}/tram/tripInfo/tripPassages/${this.props.info.tripId}`)
       .then(response => response.json())
       .then(obj => {
-        let stops = obj.actual;
+        const stops = obj.actual;
 
         this.setState({
-          stops: stops
+          stops
         });
 
         if (stops.length > 0) {
@@ -56,28 +53,20 @@ export default class Bus extends Component {
       });
   }
 
-  getClutter() {
-    fetch(
-      "http://localhost:8080/bus/clutterInfo/vehicles/" + this.props.info.tripId
-    )
-      .then(response => response.json())
-      .then(clutter => this.setState({ clutter: clutter }));
-  }
-
   getDelay() {
-    fetch("http://localhost:8080/bus/passageInfo/stops/" + this.state.nextStop)
+    fetch(`${API_HOST}/tram/passageInfo/stops/${this.state.nextStop}`)
       .then(response => response.json())
       .then(passages => {
-        const passage = passages.actual.filter(
+        let passage = passages.actual.filter(
           passage => passage.vehicleId === this.props.info.id
         )[0];
 
         if (passage != null) {
-          const actualTime = LocalTime.parse(passage.actualTime);
-          const plannedTime = LocalTime.parse(passage.plannedTime);
+          let actualTime = LocalTime.parse(passage.actualTime);
+          let plannedTime = LocalTime.parse(passage.plannedTime);
 
-          const delay = plannedTime.until(actualTime, ChronoUnit.MINUTES);
-          this.setState({ delay: delay });
+          let delay = plannedTime.until(actualTime, ChronoUnit.MINUTES);
+          this.setState({ delay });
         }
       });
   }
@@ -100,17 +89,15 @@ export default class Bus extends Component {
 
   showPopup() {
     this.setState({ showPath: true });
-    // this.getWaypoints();
+    this.getWaypoints();
     this.getStops();
     if (this.state.nextStop !== undefined) {
       this.getDelay();
-      // this.getClutter();
     }
     setInterval(() => {
       this.getStops();
       if (this.state.nextStop !== undefined) {
         this.getDelay();
-        // this.getClutter();
       }
     }, 3000);
   }
@@ -143,13 +130,12 @@ export default class Bus extends Component {
   }
 
   render() {
-    if (this.state.stops === undefined) {
-      // || this.state.path === undefined
+    if (this.state.path === undefined || this.state.stops === undefined) {
       return (
         <Marker
           key={this.props.info.id}
           position={[this.props.info.latitude, this.props.info.longitude]}
-          icon={busIcon}
+          icon={tramIcon}
           onClick={this.showPopup}
         >
           <Popup>
@@ -161,21 +147,14 @@ export default class Bus extends Component {
 
     let delay = "obliczam...";
 
-    let clutter = "obliczam...";
-
-    if (this.state.clutter !== undefined) {
-      clutter = ((this.state.clutter * 100) / 4).toFixed(2) + "%";
-    }
-
     if (this.state.delay !== undefined) {
       delay = this.state.delay;
 
-      delay =
-        delay > 0 ? (
-          <span className="delay-text">{delay} min</span>
-        ) : (
-          <span className="nodelay-text">brak</span>
-        );
+      if (delay > 0) {
+        delay = <span className="delay-text">{delay} min</span>;
+      } else {
+        delay = <span className="nodelay-text">brak</span>;
+      }
     }
 
     return (
@@ -183,17 +162,16 @@ export default class Bus extends Component {
         <Marker
           key={this.props.info.id}
           position={[this.props.info.latitude, this.props.info.longitude]}
-          icon={busIcon}
+          icon={tramIcon}
           onClick={this.showPopup}
         >
           <Popup onClose={this.hidePopup}>
-            <h2 className="bus-name">{this.props.info.name}</h2>
+            <h2 className="tram-name">{this.props.info.name}</h2>
             <span className="sub-title">
               Opóźnienie: {delay}
               <br />
             </span>
             <span className="sub-title">
-              Zatłoczenie: {clutter}
               <br />
             </span>
             <span className="sub-title">Kolejne przystanki:</span>

@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import "./App.css";
-import MapContainer from "./components/MapContainer";
+import MapContainer from "./components/MapContainer/MapContainer";
 import { BarLoader } from "react-spinners";
+import API_HOST from "./API_HOST";
 
 class App extends Component {
   constructor() {
@@ -10,13 +11,19 @@ class App extends Component {
     this.normalizeMarker = this.normalizeMarker.bind(this);
     this.getTramStops = this.getTramStops.bind(this);
     this.getTrams = this.getTrams.bind(this);
+    this.getBusStops = this.getBusStops.bind(this);
+    this.getBuses = this.getBuses.bind(this);
   }
 
   componentDidMount() {
     this.getTramStops();
+    this.getBusStops();
     this.getTrams();
     this.getBuses();
-    setInterval(() => this.getTrams(), 5000);
+    setInterval(() => {
+      this.getTrams();
+      this.getBuses();
+    }, 7000);
   }
 
   normalizeMarker(obj) {
@@ -24,22 +31,21 @@ class App extends Component {
       obj.latitude /= 1000.0 * 3600.0;
       obj.longitude /= 1000.0 * 3600.0;
     }
-
     return obj;
   }
 
   getTramStops() {
-    fetch("http://localhost:8080/tram/stopInfo/stops")
+    fetch(`${API_HOST}/tram/stopInfo/stops`)
       .then(response => response.json())
-      .then(stops => {
-        stops = stops.stops.filter(stop => stop.category === "tram");
-        stops = stops.map(stop => this.normalizeMarker(stop));
-        this.setState({ stops: stops });
+      .then(tramStops => {
+        tramStops = tramStops.stops.filter(stop => stop.category === "tram");
+        tramStops = tramStops.map(stop => this.normalizeMarker(stop));
+        this.setState({ tramStops });
       });
   }
 
   getTrams() {
-    fetch("http://localhost:8080/tram/vehicleInfo/vehicles")
+    fetch(`${API_HOST}/tram/vehicleInfo/vehicles`)
       .then(response => response.json())
       .then(trams => {
         if (trams.status === 500) {
@@ -58,17 +64,17 @@ class App extends Component {
   }
 
   getBusStops() {
-    fetch("http://localhost:8080/bus/stopInfo/stops")
+    fetch(`${API_HOST}/bus/stopInfo/stops`)
       .then(response => response.json())
-      .then(stops => {
-        stops = stops.stops.filter(stop => stop.category === "buss");
-        stops = stops.map(stop => this.normalizeMarker(stop));
-        this.setState({ stops: stops });
+      .then(busStops => {
+        busStops = busStops.stops.filter(stop => stop.category === "bus");
+        busStops = busStops.map(stop => this.normalizeMarker(stop));
+        this.setState({ busStops });
       });
   }
 
   getBuses() {
-    fetch("http://localhost:8080/bus/vehicleInfo/vehicles")
+    fetch(`${API_HOST}/bus/vehicleInfo/vehicles`)
       .then(response => response.json())
       .then(buses => {
         if (buses.status === 500) {
@@ -82,13 +88,13 @@ class App extends Component {
             bus.longitude !== undefined
         );
         buses = buses.map(tram => this.normalizeMarker(tram));
-        this.setState({ buses: buses });
+        this.setState({ buses });
       });
   }
 
   render() {
     if (
-      this.state.stops === undefined ||
+      this.state.tramStops === undefined ||
       this.state.trams === undefined ||
       this.state.buses === undefined
     ) {
@@ -106,12 +112,13 @@ class App extends Component {
     }
 
     const trams = this.state.trams;
-    const stops = this.state.stops;
+    const tramStops = this.state.tramStops;
+    const busStops = this.state.busStops;
     const buses = this.state.buses;
 
     return (
       <div className="App">
-        <MapContainer stops={stops} trams={trams} buses={buses} />
+        <MapContainer tramStops={tramStops} trams={trams} busStops={busStops} buses={buses} />
       </div>
     );
   }

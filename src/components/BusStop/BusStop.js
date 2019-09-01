@@ -1,31 +1,28 @@
 import React, { Component } from "react";
-import "./stop.css";
+import "./bus-stop.css";
 import { Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import { LocalTime, ChronoUnit } from "js-joda";
 import { ClipLoader } from "react-spinners";
+import API_HOST from "../../API_HOST";
 
 const stopIcon = new L.Icon({
-  iconUrl: "/img/stop.svg",
-  iconRetinaUrl: "/img/stop.svg",
+  iconUrl: "/img/bus-stop.svg",
+  iconRetinaUrl: "/img/bus-stop.svg",
   iconSize: [20, 20]
 });
 
-export default class Stop extends Component {
+export default class BusStop extends Component {
   constructor(props) {
     super(props);
     this.state = {};
     this.displayPassage = this.displayPassage.bind(this);
     this.getPassages = this.getPassages.bind(this);
     this.showPopup = this.showPopup.bind(this);
-    this.getClutter = this.getClutter.bind(this);
   }
 
   getPassages() {
-    fetch(
-      "http://localhost:8080/tram/passageInfo/stops/" +
-        this.props.info.shortName
-    )
+    fetch(`${API_HOST}/bus/passageInfo/stops/${this.props.info.shortName}`)
       .then(response => response.json())
       .then(passages => {
         passages = passages.actual;
@@ -40,15 +37,6 @@ export default class Stop extends Component {
         );
         this.setState({ passages: passages });
       });
-  }
-
-  getClutter() {
-    fetch(
-      "http://localhost:8080/tram/clutterInfo/stops/" +
-        this.props.info.shortName
-    )
-      .then(response => response.json())
-      .then(clutter => this.setState({ clutter: clutter }));
   }
 
   displayPassage(passage) {
@@ -68,10 +56,8 @@ export default class Stop extends Component {
 
   showPopup() {
     this.getPassages();
-    this.getClutter();
     setInterval(() => {
       this.getPassages();
-      this.getClutter();
     }, 60000);
   }
 
@@ -90,12 +76,6 @@ export default class Stop extends Component {
       );
     }
 
-    let clutter = "obliczam...";
-
-    if (this.state.clutter !== undefined) {
-      clutter = this.state.clutter + "/4";
-    }
-
     return (
       <Marker
         position={[this.props.info.latitude, this.props.info.longitude]}
@@ -105,7 +85,6 @@ export default class Stop extends Component {
         <Popup className="stop-popup" maxWidth={350}>
           <h2 className="stop-name">{this.props.info.name}</h2>
           <span className="sub-title">
-            Waga: {clutter}
             <br />
           </span>
           <span className="sub-title">Planowe odjazdy:</span>

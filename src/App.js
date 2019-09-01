@@ -96,6 +96,7 @@ class App extends Component {
     if (
       this.state.tramStops === undefined ||
       this.state.trams === undefined ||
+      this.state.busStops === undefined ||
       this.state.buses === undefined
     ) {
       return (
@@ -118,7 +119,12 @@ class App extends Component {
 
     return (
       <div className="App">
-        <MapContainer tramStops={tramStops} trams={trams} busStops={busStops} buses={buses} />
+        <MapContainer
+          tramStops={tramStops}
+          trams={trams}
+          busStops={busStops}
+          buses={buses}
+        />
       </div>
     );
   }

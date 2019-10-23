@@ -5,14 +5,23 @@ import { BarLoader } from "react-spinners";
 import API_HOST from "./API_HOST";
 
 class App extends Component {
-  constructor() {
-    super();
-    this.state = {};
+  constructor(props) {
+    super(props);
+    this.state = {
+      displayBuses: true,
+      displayBusStops: false,
+      displayTrams: false,
+      displayTramStops: false
+    };
     this.normalizeMarker = this.normalizeMarker.bind(this);
     this.getTramStops = this.getTramStops.bind(this);
     this.getTrams = this.getTrams.bind(this);
     this.getBusStops = this.getBusStops.bind(this);
     this.getBuses = this.getBuses.bind(this);
+    this.toggleDisplayBusStops = this.toggleDisplayBusStops.bind(this);
+    this.toggleDisplayBuses = this.toggleDisplayBuses.bind(this);
+    this.toggleDisplayTramStops = this.toggleDisplayTramStops.bind(this);
+    this.toggleDisplayTrams = this.toggleDisplayTrams.bind(this);
   }
 
   componentDidMount() {
@@ -92,10 +101,35 @@ class App extends Component {
       });
   }
 
+  toggleDisplayBusStops(event) {
+    this.setState({
+      displayBusStops: event.target.checked
+    });
+  }
+
+  toggleDisplayBuses(event) {
+    this.setState({
+      displayBuses: event.target.checked
+    });
+  }
+
+  toggleDisplayTramStops(event) {
+    this.setState({
+      displayTramStops: event.target.checked
+    });
+  }
+
+  toggleDisplayTrams(event) {
+    this.setState({
+      displayTrams: event.target.checked
+    });
+  }
+
   render() {
     if (
       this.state.tramStops === undefined ||
       this.state.trams === undefined ||
+      this.state.busStops === undefined ||
       this.state.buses === undefined
     ) {
       return (
@@ -118,7 +152,46 @@ class App extends Component {
 
     return (
       <div className="App">
-        <MapContainer tramStops={tramStops} trams={trams} busStops={busStops} buses={buses} />
+        <form className="map-options">
+          <label className="option">
+            Pokaż przystanki autobusowe:
+            <input
+              type="checkbox"
+              checked={this.state.displayBusStops}
+              onChange={this.toggleDisplayBusStops}
+            />
+          </label>
+          <label className="option">
+            Pokaż autobusy:
+            <input
+              type="checkbox"
+              checked={this.state.displayBuses}
+              onChange={this.toggleDisplayBuses}
+            />
+          </label>
+          <label className="option">
+            Pokaż przystanki tramwajowe:
+            <input
+              type="checkbox"
+              checked={this.state.displayTramStops}
+              onChange={this.toggleDisplayTramStops}
+            />
+          </label>
+          <label className="option">
+            Pokaż tramwaje:
+            <input
+              type="checkbox"
+              checked={this.state.displayTrams}
+              onChange={this.toggleDisplayTrams}
+            />
+          </label>
+        </form>
+        <MapContainer
+          tramStops={this.state.displayTramStops ? tramStops : []}
+          trams={this.state.displayTrams ? trams : []}
+          busStops={this.state.displayBusStops ? busStops : []}
+          buses={this.state.displayBuses ? buses : []}
+        />
       </div>
     );
   }

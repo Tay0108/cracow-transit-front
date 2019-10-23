@@ -4,11 +4,14 @@
   "private": true,
   "dependencies": {
     "js-joda": "^1.9.2",
-    "leaflet": "^1.4.0",
+    "leaflet": "^1.5.1",
     "leaflet-rotatedmarker": "^0.2.0",
+    "leaflet.markercluster": "^1.4.1",
+    "prop-types": "^15.7.2",
     "react": "^16.6.3",
     "react-dom": "^16.6.3",
-    "react-leaflet": "^2.1.4",
+    "react-leaflet": "^2.5.0",
+    "react-leaflet-markercluster": "^2.0.0-rc3",
     "react-scripts": "^3.1.1",
     "react-spinners": "^0.5.1"
   },

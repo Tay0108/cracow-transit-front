@@ -3,15 +3,22 @@ import "./App.css";
 import MapContainer from "./components/MapContainer/MapContainer";
 import { BarLoader } from "react-spinners";
 import API_HOST from "./API_HOST";
+import MarkerDetails from "./components/MarkerDetails/MarkerDetails";
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      displayBuses: true,
+      displayBuses: false,
       displayBusStops: false,
-      displayTrams: false,
-      displayTramStops: false
+      displayTrams: true,
+      displayTramStops: false,
+      clustering: true,
+      markerOpen: false,
+      markerObjectType: null,
+      markerObjectId: null,
+      markerObjectName: "",
+      markerTripId: null
     };
     this.normalizeMarker = this.normalizeMarker.bind(this);
     this.getTramStops = this.getTramStops.bind(this);
@@ -22,6 +29,9 @@ class App extends Component {
     this.toggleDisplayBuses = this.toggleDisplayBuses.bind(this);
     this.toggleDisplayTramStops = this.toggleDisplayTramStops.bind(this);
     this.toggleDisplayTrams = this.toggleDisplayTrams.bind(this);
+    this.toggleClustering = this.toggleClustering.bind(this);
+    this.openMarkerDetails = this.openMarkerDetails.bind(this);
+    this.closeMarkerDetails = this.closeMarkerDetails.bind(this);
   }
 
   componentDidMount() {
@@ -125,6 +135,34 @@ class App extends Component {
     });
   }
 
+  toggleClustering(event) {
+    this.setState({
+      clustering: event.target.checked
+    });
+  }
+
+  openMarkerDetails(type, id, tripId, name) {
+    console.log("opening marker details");
+    this.setState({
+      markerOpen: true,
+      markerObjectType: type,
+      markerObjectId: id,
+      markerTripId: tripId,
+      markerObjectName: name
+    });
+  }
+
+  closeMarkerDetails() {
+    console.log("closing marker details");
+    this.setState({
+      markerOpen: false,
+      markerObjectType: null,
+      markerObjectId: null,
+      markerTripId: null,
+      markerObjectName: null
+    });
+  }
+
   render() {
     if (
       this.state.tramStops === undefined ||
@@ -185,12 +223,34 @@ class App extends Component {
               onChange={this.toggleDisplayTrams}
             />
           </label>
+          <label className="option">
+            Włącz klasteryzację:
+            <input
+              type="checkbox"
+              checked={this.state.clustering}
+              onChange={this.toggleClustering}
+            />
+          </label>
         </form>
+        {this.state.markerOpen ? (
+          <MarkerDetails
+            onClose={this.closeMarkerDetails}
+            type={this.state.markerObjectType}
+            id={this.state.markerObjectId}
+            tripId={this.state.markerTripId}
+            name={this.state.markerObjectName}
+          />
+        ) : (
+          ""
+        )}
         <MapContainer
           tramStops={this.state.displayTramStops ? tramStops : []}
           trams={this.state.displayTrams ? trams : []}
           busStops={this.state.displayBusStops ? busStops : []}
           buses={this.state.displayBuses ? buses : []}
+          clustering={this.state.clustering}
+          onMarkerOpen={this.openMarkerDetails}
+          onMarkerClose={this.closeMarkerDetails}
         />
       </div>
     );

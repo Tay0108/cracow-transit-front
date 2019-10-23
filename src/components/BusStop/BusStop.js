@@ -21,6 +21,8 @@ export default class BusStop extends Component {
     this.displayPassage = this.displayPassage.bind(this);
     this.getPassages = this.getPassages.bind(this);
     this.showPopup = this.showPopup.bind(this);
+    this.hidePopup = this.hidePopup.bind(this);
+    this.clearFetchInterval = this.clearFetchInterval.bind(this);
   }
 
   getPassages() {
@@ -101,7 +103,7 @@ export default class BusStop extends Component {
         icon={stopIcon}
         onClick={this.showPopup}
       >
-        <Popup className="stop-popup" maxWidth={350}>
+        <Popup className="stop-popup" maxWidth={350} onClose={this.hidePopup}>
           <h2 className="stop-name">{this.props.info.name}</h2>
           <span className="sub-title">
             <br />

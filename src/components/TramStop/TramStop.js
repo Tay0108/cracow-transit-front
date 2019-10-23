@@ -15,7 +15,9 @@ const stopIcon = new L.Icon({
 export default class TramStop extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      intervalId: null
+    };
     this.displayPassage = this.displayPassage.bind(this);
     this.getPassages = this.getPassages.bind(this);
     this.showPopup = this.showPopup.bind(this);
@@ -56,9 +58,26 @@ export default class TramStop extends Component {
 
   showPopup() {
     this.getPassages();
-    setInterval(() => {
+    const intervalId = setInterval(() => {
       this.getPassages();
     }, 60000);
+
+    this.setState({intervalId});
+  }
+
+  clearFetchInterval() {
+    const intervalId = this.state.intervalId;
+    if (intervalId !== null) {
+      clearInterval(intervalId);
+    }
+  }
+
+  hidePopup() {
+    this.clearFetchInterval();
+  }
+
+  componentWillUnmount() {
+    this.clearFetchInterval();
   }
 
   render() {
@@ -69,7 +88,7 @@ export default class TramStop extends Component {
           icon={stopIcon}
           onClick={this.showPopup}
         >
-          <Popup className="stop-popup">
+          <Popup className="stop-popup" onClose={this.hidePopup}>
             <ClipLoader />
           </Popup>
         </Marker>

@@ -26,6 +26,7 @@ export default class Tram extends Component {
     this.getWaypoints = this.getWaypoints.bind(this);
     this.getStops = this.getStops.bind(this);
     this.getDelay = this.getDelay.bind(this);
+    this.clearFetchInterval = this.clearFetchInterval.bind(this);
   }
 
   getWaypoints() {
@@ -105,8 +106,16 @@ export default class Tram extends Component {
     this.setState({ intervalId });
   }
 
+  clearFetchInterval() {
+    const intervalId = this.state.intervalId;
+    if (intervalId !== null) {
+      clearInterval(intervalId);
+    }
+  }
+
   hidePopup() {
     this.setState({ showPath: false });
+    this.clearFetchInterval();
   }
 
   displayStop(stop) {
@@ -132,12 +141,8 @@ export default class Tram extends Component {
     return obj;
   }
 
-  componentWillUnmount() { // in does not work, TODO
-    console.log("test");
-    const intervalId = this.state.intervalId;
-    if (intervalId !== null) {
-      clearInterval(intervalId);
-    }
+  componentWillUnmount() {
+    this.clearFetchInterval();
   }
 
   render() {

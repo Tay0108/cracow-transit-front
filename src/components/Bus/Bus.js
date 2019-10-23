@@ -25,6 +25,7 @@ export default class Bus extends Component {
     this.getWaypoints = this.getWaypoints.bind(this);
     this.getStops = this.getStops.bind(this);
     this.getDelay = this.getDelay.bind(this);
+    this.clearFetchInterval = this.clearFetchInterval.bind(this);
   }
 
   getWaypoints() {
@@ -95,16 +96,26 @@ export default class Bus extends Component {
     if (this.state.nextStop !== undefined) {
       this.getDelay();
     }
-    setInterval(() => {
+    const intervalId = setInterval(() => {
       this.getStops();
       if (this.state.nextStop !== undefined) {
         this.getDelay();
       }
     }, 3000);
+
+    this.setState({ intervalId });
+  }
+
+  clearFetchInterval() {
+    const intervalId = this.state.intervalId;
+    if (intervalId !== null) {
+      clearInterval(intervalId);
+    }
   }
 
   hidePopup() {
     this.setState({ showPath: false });
+    this.clearFetchInterval();
   }
 
   displayStop(stop) {
@@ -128,6 +139,10 @@ export default class Bus extends Component {
       obj.lon /= 1000.0 * 3600.0;
     }
     return obj;
+  }
+
+  componentWillUnmount() {
+    this.clearFetchInterval();
   }
 
   render() {

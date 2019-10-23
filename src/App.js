@@ -153,32 +153,32 @@ class App extends Component {
     return (
       <div className="App">
         <form className="map-options">
-          <label>
-            Display bus stops:
+          <label className="option">
+            Pokaż przystanki autobusowe:
             <input
               type="checkbox"
               checked={this.state.displayBusStops}
               onChange={this.toggleDisplayBusStops}
             />
           </label>
-          <label>
-            Display buses:
+          <label className="option">
+            Pokaż autobusy:
             <input
               type="checkbox"
               checked={this.state.displayBuses}
               onChange={this.toggleDisplayBuses}
             />
           </label>
-          <label>
-            Display tram stops:
+          <label className="option">
+            Pokaż przystanki tramwajowe:
             <input
               type="checkbox"
               checked={this.state.displayTramStops}
               onChange={this.toggleDisplayTramStops}
             />
           </label>
-          <label>
-            Display trams:
+          <label className="option">
+            Pokaż tramwaje:
             <input
               type="checkbox"
               checked={this.state.displayTrams}

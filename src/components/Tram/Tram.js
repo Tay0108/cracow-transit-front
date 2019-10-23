@@ -16,7 +16,8 @@ export default class Tram extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      showPath: false
+      showPath: false,
+      intervalId: null
     };
     this.normalizeCoords = this.normalizeCoords.bind(this);
     this.displayPath = this.displayPath.bind(this);
@@ -94,12 +95,14 @@ export default class Tram extends Component {
     if (this.state.nextStop !== undefined) {
       this.getDelay();
     }
-    setInterval(() => {
+    const intervalId = setInterval(() => {
       this.getStops();
       if (this.state.nextStop !== undefined) {
         this.getDelay();
       }
     }, 3000);
+
+    this.setState({ intervalId });
   }
 
   hidePopup() {
@@ -127,6 +130,14 @@ export default class Tram extends Component {
       obj.lon /= 1000.0 * 3600.0;
     }
     return obj;
+  }
+
+  componentWillUnmount() { // in does not work, TODO
+    console.log("test");
+    const intervalId = this.state.intervalId;
+    if (intervalId !== null) {
+      clearInterval(intervalId);
+    }
   }
 
   render() {

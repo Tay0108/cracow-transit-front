@@ -2,9 +2,12 @@ import React, { useEffect, useState } from "react";
 import "./App.css";
 import MapContainer from "./components/MapContainer/MapContainer";
 import API_HOST from "./API_HOST";
-import MarkerDetails from "./components/MarkerDetails/MarkerDetails";
 import MapOptions from "./components/MapOptions/MapOptions";
 import AppLoader from "./components/AppLoader/AppLoader";
+import TramDetails from "./components/TramDetails/TramDetails";
+import TramStopDetails from "./components/TramStopDetails/TramStopDetails";
+import BusDetails from "./components/BusDetails/BusDetails";
+import BusStopDetails from "./components/BusStopDetails/BusStopDetails";
 
 export default function App() {
   const [trams, setTrams] = useState(undefined);
@@ -17,11 +20,14 @@ export default function App() {
   const [displayTrams, setDisplayTrams] = useState(true);
   const [displayTramStops, setDisplayTramStops] = useState(false);
   const [clustering, setClustering] = useState(true);
+
   const [markerOpen, setMarkerOpen] = useState(false);
   const [markerObjectType, setMarkerObjectType] = useState(null);
-  const [markerObjectId, setMarkerObjectId] = useState(null);
-  const [markerObjectName, setMarkerObjectName] = useState("");
-  const [markerTripId, setMarkerTripId] = useState(null);
+
+  const [openBus, setOpenBus] = useState(null);
+  const [openTram, setOpenTram] = useState(null);
+  const [openBusStop, setOpenBusStop] = useState(null);
+  const [openTramStop, setOpenTramStop] = useState(null);
 
   useEffect(() => {
     getTramStops();
@@ -47,7 +53,9 @@ export default function App() {
     fetch(`${API_HOST}/tram/stopInfo/stops`)
       .then(response => response.json())
       .then(tramStopsFetched => {
-        tramStopsFetched = tramStopsFetched.stops.filter(stop => stop.category === "tram");
+        tramStopsFetched = tramStopsFetched.stops.filter(
+          stop => stop.category === "tram"
+        );
         tramStopsFetched = tramStopsFetched.map(stop => normalizeMarker(stop));
         setTramStops(tramStopsFetched);
       });
@@ -76,7 +84,9 @@ export default function App() {
     fetch(`${API_HOST}/bus/stopInfo/stops`)
       .then(response => response.json())
       .then(busStopsFetched => {
-        busStopsFetched = busStopsFetched.stops.filter(stop => stop.category === "bus");
+        busStopsFetched = busStopsFetched.stops.filter(
+          stop => stop.category === "bus"
+        );
         busStopsFetched = busStopsFetched.map(stop => normalizeMarker(stop));
         setBusStops(busStopsFetched);
       });
@@ -110,7 +120,7 @@ export default function App() {
   }
 
   function toggleDisplayTramStops(event) {
-      setDisplayTramStops(event.target.checked);
+    setDisplayTramStops(event.target.checked);
   }
 
   function toggleDisplayTrams(event) {
@@ -121,22 +131,64 @@ export default function App() {
     setClustering(event.target.checked);
   }
 
-  function openMarkerDetails(type, id, tripId, name) {
-    console.log("opening marker details");
+  function openTramDetails(tram) {
+    console.log("opening tram details");
+    console.log(tram);
     setMarkerOpen(true);
-    setMarkerObjectType(type);
-    setMarkerObjectId(id);
-    setMarkerTripId(tripId);
-    setMarkerObjectName(name);
+    setMarkerObjectType("tram");
+    setOpenTram(tram);
   }
 
-  function closeMarkerDetails() {
-    console.log("closing marker details");
+  function closeTramDetails() {
+    console.log("closing tram details");
     setMarkerOpen(false);
     setMarkerObjectType(null);
-    setMarkerObjectId(null);
-    setMarkerTripId(null);
-    setMarkerObjectName(null);
+    setOpenTram(null);
+  }
+
+  function openTramStopDetails(tramStop) {
+    console.log("opening tramStop details");
+    console.log(tramStop);
+    setMarkerOpen(true);
+    setMarkerObjectType("tram_stop");
+    setOpenTramStop(tramStop);
+  }
+
+  function closeTramStopDetails() {
+    console.log("closing tramStop details");
+    setMarkerOpen(false);
+    setMarkerObjectType(null);
+    setOpenTramStop(null);
+  }
+
+  function openBusDetails(bus) {
+    console.log("opening bus details");
+    console.log(bus);
+    setMarkerOpen(true);
+    setMarkerObjectType("bus");
+    setOpenBus(bus);
+  }
+
+  function closeBusDetails() {
+    console.log("closing bus details");
+    setMarkerOpen(false);
+    setMarkerObjectType(null);
+    setOpenBus(null);
+  }
+
+  function openBusStopDetails(busStop) {
+    console.log("opening busStop details");
+    console.log(busStop);
+    setMarkerOpen(true);
+    setMarkerObjectType("bus_stop");
+    setOpenBusStop(busStop);
+  }
+
+  function closeBusStopDetails() {
+    console.log("closing busStop details");
+    setMarkerOpen(false);
+    setMarkerObjectType(null);
+    setOpenBusStop(null);
   }
 
   if (
@@ -162,25 +214,53 @@ export default function App() {
         clustering={clustering}
         toggleClustering={toggleClustering}
       />
-      {markerOpen ? (
-        <MarkerDetails
-          onClose={closeMarkerDetails}
-          type={markerObjectType}
-          id={markerObjectId}
-          tripId={markerTripId}
-          name={markerObjectName}
-        />
-      ) : (
-        ""
-      )}
+      {(() => {
+        if (markerOpen) {
+          switch (markerObjectType) {
+            case "tram": {
+              if (openTram === null) {
+                return;
+              }
+              return <TramDetails onClose={closeTramDetails} tram={openTram} />;
+            }
+            case "tram_stop":
+              if (openTramStop === null) {
+                return;
+              }
+              return (
+                <TramStopDetails
+                  onClose={closeTramStopDetails}
+                  tramStop={openTramStop}
+                />
+              );
+            case "bus":
+              if (openBus === null) {
+                return;
+              }
+              return <BusDetails onClose={closeBusDetails} bus={openBus} />;
+            case "bus_stop":
+              if (openBusStop === null) {
+                return;
+              }
+              return (
+                <BusStopDetails
+                  onClose={closeBusStopDetails}
+                  busStop={openBusStop}
+                />
+              );
+          }
+        }
+      })()}
       <MapContainer
         tramStops={displayTramStops ? tramStops : []}
         trams={displayTrams ? trams : []}
         busStops={displayBusStops ? busStops : []}
         buses={displayBuses ? buses : []}
         clustering={clustering}
-        onMarkerOpen={openMarkerDetails}
-        onMarkerClose={closeMarkerDetails}
+        onTramOpen={openTramDetails}
+        onTramStopOpen={openTramStopDetails}
+        onBusOpen={openBusDetails}
+        onBusStopOpen={openBusStopDetails}
       />
     </div>
   );

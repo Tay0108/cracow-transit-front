@@ -12,7 +12,11 @@ const tramIcon = new L.Icon({
 export default function Tram({ info, onMarkerOpen }) {
   function openMarker() {
     // TODO: add some arrow or change icon color
-    onMarkerOpen("tram", info.tramId, info.tripId, info.name);
+    onMarkerOpen(info);
+  }
+
+  function closeMarker() {
+    // TODO: revert to previous icon
   }
 
   return (

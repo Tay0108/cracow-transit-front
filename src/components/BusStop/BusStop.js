@@ -12,7 +12,11 @@ const busStopIcon = new L.Icon({
 export default function BusStop({ info, onMarkerOpen }) {
   function openMarker() {
     // TODO: add some arrow or change icon color
-    onMarkerOpen("bus_stop", info.busId, info.tripId, info.name);
+    onMarkerOpen(info);
+  }
+
+  function closeMarker() {
+    // TODO: revert to previous icon
   }
 
   return (

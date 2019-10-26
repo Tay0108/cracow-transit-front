@@ -9,18 +9,21 @@ const tramStopIcon = new L.Icon({
   iconSize: [20, 20]
 });
 
-export default function TramStop({info, onMarkerOpen}) {
+export default function TramStop({ info, onMarkerOpen }) {
   function openMarker() {
     // TODO: add some arrow or change icon color
-    onMarkerOpen("tram_stop", info.busId, info.tripId, info.name);
+    onMarkerOpen(info);
   }
 
-    return (
-      <Marker
-        position={[info.latitude, info.longitude]}
-        icon={tramStopIcon}
-        onClick={openMarker}
-      />
-    );
+  function closeMarker() {
+    // TODO: revert to previous icon
+  }
 
+  return (
+    <Marker
+      position={[info.latitude, info.longitude]}
+      icon={tramStopIcon}
+      onClick={openMarker}
+    />
+  );
 }

@@ -13,8 +13,10 @@ export default function MapContainer({
   trams,
   tramStops,
   clustering,
-  onMarkerOpen,
-  onMarkerClose
+    onTramOpen,
+    onTramStopOpen,
+  onBusOpen,
+    onBusStopOpen,
 }) {
   const initialPosition = [50.0613888889, 19.9383333333];
   const initialZoom = 13;
@@ -24,8 +26,7 @@ export default function MapContainer({
       <TramStop
         key={tramStop.id}
         info={tramStop}
-        onMarkerOpen={onMarkerOpen}
-        onMarkerClose={onMarkerClose}
+        onMarkerOpen={onTramStopOpen}
       />
     );
   }
@@ -35,8 +36,7 @@ export default function MapContainer({
       <Tram
         key={tram.id}
         info={tram}
-        onMarkerOpen={onMarkerOpen}
-        onMarkerClose={onMarkerClose}
+        onMarkerOpen={onTramOpen}
       />
     );
   }
@@ -46,8 +46,7 @@ export default function MapContainer({
       <BusStop
         key={busStop.id}
         info={busStop}
-        onMarkerOpen={onMarkerOpen}
-        onMarkerClose={onMarkerClose}
+        onMarkerOpen={onBusStopOpen}
       />
     );
   }
@@ -57,8 +56,7 @@ export default function MapContainer({
       <Bus
         key={bus.id}
         info={bus}
-        onMarkerOpen={onMarkerOpen}
-        onMarkerClose={onMarkerClose}
+        onMarkerOpen={onBusOpen}
       />
     );
   }

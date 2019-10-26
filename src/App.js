@@ -248,6 +248,8 @@ export default function App() {
                   busStop={openBusStop}
                 />
               );
+            default:
+              break;
           }
         }
       })()}

@@ -1,22 +1,62 @@
 .marker-details {
-    position: absolute;
-    top: 0;
-    right: 0;
-    z-index: 9999;
-    background: rgba(32, 36, 33, 0.9);
-    display: flex;
-    flex-direction: column;
-    padding: 20px;
-    color: #ffffff;
-    border-radius: 0 0 0 5px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 9999;
+  background: rgba(32, 36, 33, 0.9);
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  color: #ffffff;
+  border-radius: 0 0 0 5px;
 }
 
 .close-details {
-    width: 10px;
-    cursor: pointer;
-    text-align: center;
+  width: 10px;
+  cursor: pointer;
+  text-align: center;
 }
 
 .current-tram-stop {
-    padding-right: 20px;
+  padding-right: 20px;
+}
+
+.delay-text {
+  color: red;
+  margin-left: 5px;
+}
+
+.nodelay-text {
+  color: green;
+  margin-left: 5px;
+}
+
+.bus-name {
+  font-size: 1.5em;
+}
+
+.stops-list {
+  list-style: none;
+  overflow-y: auto;
+  max-height: 280px;
+}
+
+.stops-list li {
+  margin: 10px 0;
+}
+
+.sub-title {
+  font-size: 1.2em;
+}
+
+.stop-num {
+  background-color: #1f6d18;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: inline-block;
+  padding: 3px;
+  text-align: center;
+  color: #ffffff;
+  line-height: 22px;
 }

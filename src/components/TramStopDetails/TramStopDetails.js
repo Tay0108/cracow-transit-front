@@ -4,16 +4,7 @@ import API_HOST from "../../API_HOST";
 import { ChronoUnit, LocalTime } from "js-joda";
 
 export default function TramStopDetails({ tramStop, onClose }) {
-  const [intervalId, setIntervalId] = useState(null);
-
   const [tramStopPassages, setTramStopPassages] = useState(undefined);
-
-  function clearFetchInterval() {
-    if (intervalId !== null) {
-      clearInterval(intervalId);
-      setIntervalId(null);
-    }
-  }
 
   function getTramStopPassages() {
     console.log("getTramStopPassages:", tramStop);
@@ -55,22 +46,32 @@ export default function TramStopDetails({ tramStop, onClose }) {
   }
 
   useEffect(() => {
-      if(tramStop === null) {
-          return;
-      }
-    getTramStopPassages();
-  }, []);
-
-    if(tramStop === null) {
-        return null;
+    if (tramStop === null) {
+      return;
     }
+    getTramStopPassages();
+
+    const tramStopIntervalId = setInterval(() => {
+      console.log("fetching data for tramStop");
+      getTramStopPassages();
+    }, 5000);
+
+    return () => {
+      clearInterval(tramStopIntervalId);
+    };
+      // eslint-disable-next-line
+  }, [tramStop.shortName]);
+
+    if (tramStop === null) {
+    return null;
+  }
 
   if (tramStopPassages === undefined) {
     return <>"loading tram stop passages"</>;
   }
 
   return (
-      <div className="marker-details">
+    <div className="marker-details">
       <h2 className="stop-name">{tramStop.name}</h2>
       <span className="sub-title">
         <br />

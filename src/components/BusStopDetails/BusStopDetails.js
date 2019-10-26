@@ -4,16 +4,7 @@ import API_HOST from "../../API_HOST";
 import { ChronoUnit, LocalTime } from "js-joda";
 
 export default function BusStopDetails({ busStop, onClose }) {
-  const [intervalId, setIntervalId] = useState(null);
-
-  const [passages, setPassages] = useState(undefined);
-
-  function clearFetchInterval() {
-    if (intervalId !== null) {
-      clearInterval(intervalId);
-      setIntervalId(null);
-    }
-  }
+  const [busStopPassages, setBusStopPassages] = useState(undefined);
 
   function getBusStopPassages() {
     fetch(`${API_HOST}/bus/passageInfo/stops/${busStop.shortName}`)
@@ -33,7 +24,7 @@ export default function BusStopDetails({ busStop, onClose }) {
               passage.plannedTime !== null &&
               passage.plannedTime !== undefined)
         );
-        setPassages(fetchedPassages);
+        setBusStopPassages(fetchedPassages);
       });
   }
 
@@ -52,8 +43,26 @@ export default function BusStopDetails({ busStop, onClose }) {
     );
   }
 
+  useEffect(() => {
+    getBusStopPassages();
+
+    const busStopIntervalId = setInterval(() => {
+      console.log("fetching data for busStop");
+      getBusStopPassages();
+    }, 5000);
+
+    return () => {
+      clearInterval(busStopIntervalId);
+    };
+      // eslint-disable-next-line
+  }, [busStop.shortName]);
+
   if (busStop === null) {
     return null;
+  }
+
+  if (busStopPassages === undefined) {
+    return <>"loading bus stop passages"</>;
   }
 
   return (
@@ -64,7 +73,7 @@ export default function BusStopDetails({ busStop, onClose }) {
       </span>
       <span className="sub-title">Planowe odjazdy:</span>
       <ul className="passages-list">
-        {passages.map(passage => displayBusStopPassage(passage))}
+        {busStopPassages.map(passage => displayBusStopPassage(passage))}
       </ul>
     </div>
   );

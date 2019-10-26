@@ -1,0 +1,27 @@
+.loader-wrapper {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    justify-content: center;
+    align-content: center;
+    flex-direction: column;
+}
+
+.loader-box {
+    text-align: center;
+}
+
+.loader-box div {
+    display: inline-block;
+}
+
+.app-title {
+    font-size: 3em;
+    margin-bottom: 20px;
+}
+
+.app-logo {
+    width: 100px;
+    display: block;
+    margin: 0 auto;
+}

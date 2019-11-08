@@ -53,6 +53,11 @@ export default function App() {
     fetch(`${API_HOST}/tram/stopInfo/stops`)
       .then(response => response.json())
       .then(tramStopsFetched => {
+        if(tramStopsFetched.status === 500) {
+          console.log("Tram stops responded with 500");
+          return;
+        }
+
         tramStopsFetched = tramStopsFetched.stops.filter(
           stop => stop.category === "tram"
         );
@@ -192,8 +197,8 @@ export default function App() {
   }
 
   if (
-    tramStops === undefined ||
-    trams === undefined ||
+    //tramStops === undefined || TODO
+    //trams === undefined ||
     busStops === undefined ||
     buses === undefined
   ) {
@@ -253,6 +258,7 @@ export default function App() {
           }
         }
       })()}
+
       <MapContainer
         tramStops={displayTramStops ? tramStops : []}
         trams={displayTrams ? trams : []}

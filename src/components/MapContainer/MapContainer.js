@@ -13,10 +13,10 @@ export default function MapContainer({
   trams,
   tramStops,
   clustering,
-    onTramOpen,
-    onTramStopOpen,
+  onTramOpen,
+  onTramStopOpen,
   onBusOpen,
-    onBusStopOpen,
+  onBusStopOpen
 }) {
   const initialPosition = [50.0613888889, 19.9383333333];
   const initialZoom = 13;
@@ -32,33 +32,26 @@ export default function MapContainer({
   }
 
   function displayTram(tram) {
-    return (
-      <Tram
-        key={tram.id}
-        info={tram}
-        onMarkerOpen={onTramOpen}
-      />
-    );
+    return <Tram key={tram.id} info={tram} onMarkerOpen={onTramOpen} />;
   }
 
   function displayBusStop(busStop) {
     return (
-      <BusStop
-        key={busStop.id}
-        info={busStop}
-        onMarkerOpen={onBusStopOpen}
-      />
+      <BusStop key={busStop.id} info={busStop} onMarkerOpen={onBusStopOpen} />
     );
   }
 
   function displayBus(bus) {
-    return (
-      <Bus
-        key={bus.id}
-        info={bus}
-        onMarkerOpen={onBusOpen}
-      />
-    );
+    return <Bus key={bus.id} info={bus} onMarkerOpen={onBusOpen} />;
+  }
+
+  if (
+    tramStops === undefined ||
+    busStops === undefined ||
+    trams === undefined ||
+    buses === undefined
+  ) {
+    return null;
   }
 
   return (

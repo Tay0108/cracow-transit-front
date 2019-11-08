@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from "react";
+import "../../styles/marker-details.css";
 import "./tram-details.css";
 import API_HOST from "../../API_HOST";
 import { ChronoUnit, LocalTime } from "js-joda";
 import normalizeCoords from "../../util/normalizeCoords";
 import { Polyline } from "react-leaflet";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
+import DetailsLoader from "../DetailsLoader/DetailsLoader";
 
 // TODO: napisac hooka ktory jednorazowo fetchuje dane dla autobusu lub tramwaju a tu zrobic metode refresh ktora go uzywa
 
@@ -134,23 +138,25 @@ export default function TramDetails({ tram, onClose }) {
   }
 
   if (currentTramStops === undefined) {
-    return "loading tram";
+    return <DetailsLoader/>;
   }
 
   return (
     <>
       <div className="marker-details">
-        <button className="close-details" onClick={onClose}>
-          X
-        </button>
-        <h2 className="tram-name">{tram.name}</h2>
-        <span className="sub-title">
-          Opóźnienie: {tramDelay}
-          <br />
-        </span>
-        <span className="sub-title">
-          <br />
-        </span>
+        <header className="marker-details-header">
+          <button className="close-details" onClick={onClose}>
+            <FontAwesomeIcon icon={faTimes} />
+          </button>
+          <h2 className="vehicle-name">{tram.name}</h2>
+          <span className="sub-title">
+            Opóźnienie: {tramDelay}
+            <br />
+          </span>
+          <span className="sub-title">
+            <br />
+          </span>
+        </header>
         <span className="sub-title">Kolejne przystanki:</span>
         <ul className="stops-list">
           {currentTramStops.map(stop => displayTramStop(stop))}

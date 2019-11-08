@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
+import "../../styles/marker-details.css";
 import "./bus-stop-details.css";
 import API_HOST from "../../API_HOST";
 import { ChronoUnit, LocalTime } from "js-joda";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
+import DetailsLoader from "../DetailsLoader/DetailsLoader";
 
 export default function BusStopDetails({ busStop, onClose }) {
   const [busStopPassages, setBusStopPassages] = useState(undefined);
@@ -36,7 +40,7 @@ export default function BusStopDetails({ busStop, onClose }) {
 
     return (
       <li key={passage.passageid}>
-        <div className="passage-number">{passage.patternText}</div>w kierunku
+        <div className="passage-number">{passage.patternText}</div> w kierunku
         {passage.direction} o {passage.plannedTime}
         <span className="delay-text">{delay > 0 ? `(+${delay}min)` : ""}</span>
       </li>
@@ -54,7 +58,7 @@ export default function BusStopDetails({ busStop, onClose }) {
     return () => {
       clearInterval(busStopIntervalId);
     };
-      // eslint-disable-next-line
+    // eslint-disable-next-line
   }, [busStop.shortName]);
 
   if (busStop === null) {
@@ -62,15 +66,20 @@ export default function BusStopDetails({ busStop, onClose }) {
   }
 
   if (busStopPassages === undefined) {
-    return <>"loading bus stop passages"</>;
+      return <DetailsLoader/>;
   }
 
   return (
     <div className="marker-details">
-      <h2 className="stop-name">{busStop.name}</h2>
-      <span className="sub-title">
-        <br />
-      </span>
+      <header className="marker-details-header">
+        <button className="close-details" onClick={onClose}>
+          <FontAwesomeIcon icon={faTimes} />
+        </button>
+        <h2 className="stop-name">{busStop.name}</h2>
+        <span className="sub-title">
+          <br />
+        </span>
+      </header>
       <span className="sub-title">Planowe odjazdy:</span>
       <ul className="passages-list">
         {busStopPassages.map(passage => displayBusStopPassage(passage))}

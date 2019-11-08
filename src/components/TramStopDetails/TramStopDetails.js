@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
+import "../../styles/marker-details.css";
 import "./tram-stop-details.css";
 import API_HOST from "../../API_HOST";
 import { ChronoUnit, LocalTime } from "js-joda";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
+import DetailsLoader from "../DetailsLoader/DetailsLoader";
 
 export default function TramStopDetails({ tramStop, onClose }) {
   const [tramStopPassages, setTramStopPassages] = useState(undefined);
@@ -59,23 +63,28 @@ export default function TramStopDetails({ tramStop, onClose }) {
     return () => {
       clearInterval(tramStopIntervalId);
     };
-      // eslint-disable-next-line
+    // eslint-disable-next-line
   }, [tramStop.shortName]);
 
-    if (tramStop === null) {
+  if (tramStop === null) {
     return null;
   }
 
   if (tramStopPassages === undefined) {
-    return <>"loading tram stop passages"</>;
+      return <DetailsLoader/>;
   }
 
   return (
     <div className="marker-details">
-      <h2 className="stop-name">{tramStop.name}</h2>
-      <span className="sub-title">
-        <br />
-      </span>
+      <header className="marker-details-header">
+        <button className="close-details" onClick={onClose}>
+          <FontAwesomeIcon icon={faTimes} />
+        </button>
+        <h2 className="stop-name">{tramStop.name}</h2>
+        <span className="sub-title">
+          <br />
+        </span>
+      </header>
       <span className="sub-title">Planowe odjazdy:</span>
       <ul className="passages-list">
         {tramStopPassages.map(passage => displayTramStopPassage(passage))}

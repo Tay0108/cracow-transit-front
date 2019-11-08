@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from "react";
+import "../../styles/marker-details.css";
 import "./bus-details.css";
 import API_HOST from "../../API_HOST";
 import { ChronoUnit, LocalTime } from "js-joda";
 import normalizeCoords from "../../util/normalizeCoords";
 import { Polyline } from "react-leaflet";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
+import DetailsLoader from "../DetailsLoader/DetailsLoader";
 
 export default function BusDetails({ bus, onClose }) {
   const [currentBusStops, setCurrentBusStops] = useState(undefined);
@@ -114,7 +118,7 @@ export default function BusDetails({ bus, onClose }) {
   }
 
   if (currentBusStops === undefined) {
-    return <>loading bus</>;
+    return <DetailsLoader/>;
   }
 
   let busDelay = "obliczam...";
@@ -132,14 +136,19 @@ export default function BusDetails({ bus, onClose }) {
 
   return (
     <div className="marker-details">
-      <h2 className="bus-name">{bus.name}</h2>
-      <span className="sub-title">
-        Opóźnienie: {busDelay}
-        <br />
-      </span>
-      <span className="sub-title">
-        <br />
-      </span>
+      <header className="marker-details-header">
+        <button className="close-details" onClick={onClose}>
+          <FontAwesomeIcon icon={faTimes} />
+        </button>
+        <h2 className="vehicle-name">{bus.name}</h2>
+        <span className="sub-title">
+          Opóźnienie: {busDelay}
+          <br />
+        </span>
+        <span className="sub-title">
+          <br />
+        </span>
+      </header>
       <span className="sub-title">Kolejne przystanki:</span>
       <ul className="stops-list">
         {currentBusStops.map(stop => displayBusStop(stop))}

@@ -1,6 +1,10 @@
 {
-  "name": "cracow-trams-front",
-  "version": "0.1.0",
+  "name": "cracow-transit",
+  "version": "0.2.0",
+  "description": "Showing Cracow Buses & Trams real time!",
+  "engines": {
+    "node": "12.13.0"
+  },
   "private": true,
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.25",

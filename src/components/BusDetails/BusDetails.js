@@ -177,7 +177,7 @@ export default function BusDetails({ bus, onClose }) {
       <ul className="stops-list">
         {currentBusStops !== []
           ? currentBusStops.map(stop => displayBusStop(stop))
-          : "Nie można teraz wyświetlić danych o tym autobusie, spróbuj ponownie pozniej."} // TODO
+          : "Nie można teraz wyświetlić danych o tym autobusie, spróbuj ponownie pozniej."}
       </ul>
     </div>
   );

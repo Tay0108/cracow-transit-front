@@ -16,23 +16,36 @@ export default function TramDetails({ tram, onClose }) {
   const [tramPath, setTramPath] = useState(undefined);
 
   const [currentTramStops, setCurrentTramStops] = useState(undefined);
-  const [nextCurrentTramStop, setNextCurrentTramStop] = useState(undefined);
+  const [currentTramNextStop, setCurrentTramNextStop] = useState(undefined);
   const [currentTramDelay, setCurrentTramDelay] = useState(undefined);
 
   useEffect(() => {
-    setShowTramPath(true);
-    // getTramWaypoints();
-    getCurrentTramStops();
-    if (nextCurrentTramStop !== undefined) {
-      getCurrentTramDelay();
-    }
-    const tramIntervalId = setInterval(() => {
-      console.log("fetching data for tram");
-      getCurrentTramStops();
+      async function fetchData() {
+          setShowTramPath(true);
+          // getTramWaypoints();
+          let fetchedTramStops = await getCurrentTramStops();
 
-      if (nextCurrentTramStop !== undefined) {
-        getCurrentTramDelay();
+          setCurrentTramStops(fetchedTramStops);
+
+          let fetchedTramNextStop;
+
+          if (fetchedTramStops && fetchedTramStops.length > 0) {
+              fetchedTramNextStop = fetchedTramStops[0].stop.shortName;
+              console.log("fetchedTramNextStop:", fetchedTramStops[0].stop.shortName);
+              setCurrentTramNextStop(fetchedTramNextStop);
+          }
+
+          if (fetchedTramNextStop !== undefined) {
+              const fetchedTramDelay = await getCurrentTramDelay(fetchedTramNextStop);
+              console.log("fetchedTramDelay:", fetchedTramDelay);
+              setCurrentTramDelay(fetchedTramDelay);
+          }
       }
+
+      fetchData();
+
+    const tramIntervalId = setInterval(() => {
+        fetchData();
     }, 7000);
 
     return () => {
@@ -42,44 +55,49 @@ export default function TramDetails({ tram, onClose }) {
   }, [tram.id]);
 
   async function getCurrentTramStops() {
-    fetch(`${API_HOST}/tram/tripInfo/tripPassages/${tram.tripId}`)
-      .then(response => response.json())
-      .then(tramStops => {
-        tramStops = tramStops.actual;
-        setCurrentTramStops(tramStops);
+      console.log("getCurrentTramStops(): start");
+    try {
+        let response = await fetch(`${API_HOST}/tram/tripInfo/tripPassages/${tram.tripId}`);
+        response = await response.json();
+        const tramStops = response.actual;
+        return tramStops;
+    } catch(error) {
+        console.error(error);
+        console.error("getCurrentTramStops(): return []");
+        return [];
+    }
+}
 
-        if (tramStops.length > 0) {
-          setNextCurrentTramStop(tramStops[0].stop.shortName);
-        }
-      });
-  }
+  async function getCurrentTramDelay(nextStop) {
+      console.log("get tram delay");
 
-  async function getCurrentTramDelay() {
-    console.log("get tram delay");
+      try {
+          const response = await fetch(`${API_HOST}/tram/passageInfo/stops/${nextStop}`);
+          const passages = await response.json();
 
-    fetch(`${API_HOST}/tram/passageInfo/stops/${nextCurrentTramStop}`)
-      .then(response => response.json())
-      .then(passages => {
-        if (passages.status === 500) {
-          console.error("Fetching passages for tram returned 500");
-          return;
-        }
-        const passage = passages.actual.filter(
-          currentPassage => currentPassage.vehicleId === tram.id
-        )[0];
-        console.log("passage found", passage);
-        if (passage != null) {
-          const actualTime = LocalTime.parse(passage.actualTime);
-          const plannedTime = LocalTime.parse(passage.plannedTime);
+          if (passages.status === 500) {
+              console.error("Fetching passages for tram returned 500");
+              return null;
+          }
+          const passage = passages.actual.filter(
+              currentPassage => currentPassage.vehicleId === tram.id
+          )[0];
+          if (passage != null) {
+              const actualTime = LocalTime.parse(passage.actualTime);
+              const plannedTime = LocalTime.parse(passage.plannedTime);
 
-          const timeDifference = plannedTime.until(
-            actualTime,
-            ChronoUnit.MINUTES
-          );
-          console.log("TIME DIFFERENCE", timeDifference);
-          setCurrentTramDelay(timeDifference);
-        }
-      });
+              const timeDifference = plannedTime.until(
+                  actualTime,
+                  ChronoUnit.MINUTES
+              );
+
+              return timeDifference;
+          }
+      }
+      catch(error) {
+        console.error(error);
+        return 0;
+      }
   }
 
   function displayTramStop(stop) {
@@ -138,7 +156,7 @@ export default function TramDetails({ tram, onClose }) {
   }
 
   if (currentTramStops === undefined) {
-    return <DetailsLoader/>;
+    return <DetailsLoader />;
   }
 
   return (

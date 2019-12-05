@@ -11,22 +11,58 @@ import DetailsLoader from "../DetailsLoader/DetailsLoader";
 
 export default function BusDetails({ bus, onClose }) {
   const [currentBusStops, setCurrentBusStops] = useState(undefined);
-  const [nextCurrentBusStop, setNextCurrentBusStop] = useState(undefined);
   const [currentBusDelay, setCurrentBusDelay] = useState(undefined);
-
   const [showBusPath, setShowBusPath] = useState(false); // TODO
   const [busPath, setBusPath] = useState(undefined);
 
-  function getCurrentBusStops() {
-    fetch(`${API_HOST}/bus/tripInfo/tripPassages/${bus.tripId}`)
-      .then(response => response.json())
-      .then(busStops => {
-        setCurrentBusStops(busStops.actual);
+  useEffect(() => {
+    async function fetchData() {
+      setShowBusPath(true);
+      // getTramWaypoints();
+      let fetchedBusStops = await getCurrentBusStops();
+      setCurrentBusStops(fetchedBusStops);
 
-        if (busStops.length > 0) {
-          setNextCurrentBusStop(busStops[0].stop.shortName);
-        }
-      });
+      let fetchedBusNextStop;
+
+      if (fetchedBusStops && fetchedBusStops.length > 0) {
+        fetchedBusNextStop = fetchedBusStops[0].stop.shortName;
+        console.log("fetchedBusNextStop:", fetchedBusNextStop);
+      }
+
+      if (fetchedBusNextStop !== undefined) {
+        const fetchedBusDelay = await getCurrentBusDelay(fetchedBusNextStop);
+        console.log("fetchedBusDelay:", fetchedBusDelay);
+        setCurrentBusDelay(fetchedBusDelay);
+      }
+    }
+
+    fetchData();
+
+    const busIntervalId = setInterval(() => {
+      fetchData();
+    }, 7000);
+
+    return () => {
+      clearInterval(busIntervalId);
+    };
+    // eslint-disable-next-line
+  }, [bus.id]);
+
+  async function getCurrentBusStops() {
+    console.log("getCurrentTramStops(): start");
+    try {
+      let response = await fetch(
+        `${API_HOST}/bus/tripInfo/tripPassages/${bus.tripId}`
+      );
+      response = await response.json();
+      const busStops = response.actual;
+      setCurrentBusStops(busStops);
+      return busStops;
+    } catch (error) {
+      console.error(error);
+      console.error("getCurrentBusStops(): return []");
+      return [];
+    }
   }
   function getBusWaypoints() {
     fetch(`${API_HOST}/bus/pathInfo/vehicle/${bus.id}`)
@@ -52,28 +88,37 @@ export default function BusDetails({ bus, onClose }) {
     return "";
   }
 
-  function getCurrentBusDelay() {
+  async function getCurrentBusDelay(nextStop) {
     console.log("getting bus delay");
 
-    fetch(`${API_HOST}/bus/passageInfo/stops/${nextCurrentBusStop}`)
-      .then(response => response.json())
-      .then(passages => {
-        if (passages.status === 500) {
-          console.error("Fetching passages for bus returned 500");
-          return;
-        }
-        const passage = passages.actual.filter(
-          passage => passage.vehicleId === bus.id
-        )[0];
+    try {
+      const response = await fetch(
+        `${API_HOST}/bus/passageInfo/stops/${nextStop}`
+      );
+      const passages = await response.json();
 
-        if (passage != null) {
-          const actualTime = LocalTime.parse(passage.actualTime);
-          const plannedTime = LocalTime.parse(passage.plannedTime);
+      if (passages.status === 500) {
+        console.error("Fetching passages for bus returned 500");
+        return null;
+      }
+      const passage = passages.actual.filter(
+        passage => passage.vehicleId === bus.id
+      )[0];
 
-          const busDelay = plannedTime.until(actualTime, ChronoUnit.MINUTES);
-          setCurrentBusDelay(busDelay);
-        }
-      });
+      if (passage != null) {
+        const actualTime = LocalTime.parse(passage.actualTime);
+        const plannedTime = LocalTime.parse(passage.plannedTime);
+
+        const timeDifference = plannedTime.until(
+          actualTime,
+          ChronoUnit.MINUTES
+        );
+        return timeDifference;
+      }
+    } catch (error) {
+      console.error(error);
+      return 0;
+    }
   }
 
   function displayBusStop(stop) {
@@ -92,33 +137,12 @@ export default function BusDetails({ bus, onClose }) {
     );
   }
 
-  useEffect(() => {
-    setShowBusPath(true);
-    // getBusWaypoints();
-    getCurrentBusStops();
-    if (nextCurrentBusStop !== undefined) {
-      getCurrentBusDelay();
-    }
-    const busIntervalId = setInterval(() => {
-      console.log("fetching data for bus");
-      getCurrentBusStops();
-      if (nextCurrentBusStop !== undefined) {
-        getCurrentBusDelay();
-      }
-    }, 7000);
-
-    return () => {
-      clearInterval(busIntervalId);
-    };
-    // eslint-disable-next-line
-  }, [bus.id]);
-
   if (bus === null) {
     return null;
   }
 
   if (currentBusStops === undefined) {
-    return <DetailsLoader/>;
+    return <DetailsLoader />;
   }
 
   let busDelay = "obliczam...";
@@ -151,7 +175,9 @@ export default function BusDetails({ bus, onClose }) {
       </header>
       <span className="sub-title">Kolejne przystanki:</span>
       <ul className="stops-list">
-        {currentBusStops.map(stop => displayBusStop(stop))}
+        {currentBusStops !== []
+          ? currentBusStops.map(stop => displayBusStop(stop))
+          : "Nie można teraz wyświetlić danych o tym autobusie, spróbuj ponownie pozniej."} // TODO
       </ul>
     </div>
   );

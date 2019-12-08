@@ -1,41 +1,49 @@
-import React, { Component } from "react";
+import React, { useEffect, useState } from "react";
 import "./App.css";
 import MapContainer from "./components/MapContainer/MapContainer";
-import { BarLoader } from "react-spinners";
 import API_HOST from "./API_HOST";
+import MapOptions from "./components/MapOptions/MapOptions";
+import AppLoader from "./components/AppLoader/AppLoader";
+import TramDetails from "./components/TramDetails/TramDetails";
+import TramStopDetails from "./components/TramStopDetails/TramStopDetails";
+import BusDetails from "./components/BusDetails/BusDetails";
+import BusStopDetails from "./components/BusStopDetails/BusStopDetails";
 
-class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      displayBuses: true,
-      displayBusStops: false,
-      displayTrams: false,
-      displayTramStops: false
-    };
-    this.normalizeMarker = this.normalizeMarker.bind(this);
-    this.getTramStops = this.getTramStops.bind(this);
-    this.getTrams = this.getTrams.bind(this);
-    this.getBusStops = this.getBusStops.bind(this);
-    this.getBuses = this.getBuses.bind(this);
-    this.toggleDisplayBusStops = this.toggleDisplayBusStops.bind(this);
-    this.toggleDisplayBuses = this.toggleDisplayBuses.bind(this);
-    this.toggleDisplayTramStops = this.toggleDisplayTramStops.bind(this);
-    this.toggleDisplayTrams = this.toggleDisplayTrams.bind(this);
-  }
+export default function App() {
+  const [trams, setTrams] = useState(undefined);
+  const [tramStops, setTramStops] = useState(undefined);
+  const [buses, setBuses] = useState(undefined);
+  const [busStops, setBusStops] = useState(undefined);
 
-  componentDidMount() {
-    this.getTramStops();
-    this.getBusStops();
-    this.getTrams();
-    this.getBuses();
+  const [displayBuses, setDisplayBuses] = useState(false);
+  const [displayBusStops, setDisplayBusStops] = useState(false);
+  const [displayTrams, setDisplayTrams] = useState(true);
+  const [displayTramStops, setDisplayTramStops] = useState(false);
+  const [clustering, setClustering] = useState(true);
+
+  const [markerOpen, setMarkerOpen] = useState(false);
+  const [markerObjectType, setMarkerObjectType] = useState(null);
+
+  const [openBus, setOpenBus] = useState(null);
+  const [openTram, setOpenTram] = useState(null);
+  const [openBusStop, setOpenBusStop] = useState(null);
+  const [openTramStop, setOpenTramStop] = useState(null);
+
+  const [vehiclePath, setVehiclePath] = useState(null);
+
+  useEffect(() => {
+    getTramStops();
+    getBusStops();
+    getTrams();
+    getBuses();
     setInterval(() => {
-      this.getTrams();
-      this.getBuses();
+      getTrams();
+      getBuses();
     }, 7000);
-  }
+    // eslint-disable-next-line
+  }, []);
 
-  normalizeMarker(obj) {
+  function normalizeMarker(obj) {
     if (obj.latitude !== undefined && obj.longitude !== undefined) {
       obj.latitude /= 1000.0 * 3600.0;
       obj.longitude /= 1000.0 * 3600.0;
@@ -43,158 +51,218 @@ class App extends Component {
     return obj;
   }
 
-  getTramStops() {
+  function getTramStops() {
     fetch(`${API_HOST}/tram/stopInfo/stops`)
       .then(response => response.json())
-      .then(tramStops => {
-        tramStops = tramStops.stops.filter(stop => stop.category === "tram");
-        tramStops = tramStops.map(stop => this.normalizeMarker(stop));
-        this.setState({ tramStops });
+      .then(tramStopsFetched => {
+        if(tramStopsFetched.status === 500) {
+          console.log("Tram stops responded with 500");
+          return;
+        }
+
+        tramStopsFetched = tramStopsFetched.stops.filter(
+          stop => stop.category === "tram"
+        );
+        tramStopsFetched = tramStopsFetched.map(stop => normalizeMarker(stop));
+        setTramStops(tramStopsFetched);
       });
   }
 
-  getTrams() {
+  function getTrams() {
     fetch(`${API_HOST}/tram/vehicleInfo/vehicles`)
       .then(response => response.json())
-      .then(trams => {
-        if (trams.status === 500) {
-          this.setState({ trams: [] });
+      .then(tramsFetched => {
+        if (tramsFetched.status === 500) {
+          console.error("Trams responded with 500");
           return;
         }
-        trams = trams.vehicles.filter(
+        tramsFetched = tramsFetched.vehicles.filter(
           tram =>
             !tram.deleted &&
             tram.latitude !== undefined &&
             tram.longitude !== undefined
         );
-        trams = trams.map(tram => this.normalizeMarker(tram));
-        this.setState({ trams: trams });
+        tramsFetched = tramsFetched.map(tram => normalizeMarker(tram));
+        setTrams(tramsFetched);
       });
   }
 
-  getBusStops() {
+  function getBusStops() {
     fetch(`${API_HOST}/bus/stopInfo/stops`)
       .then(response => response.json())
-      .then(busStops => {
-        busStops = busStops.stops.filter(stop => stop.category === "bus");
-        busStops = busStops.map(stop => this.normalizeMarker(stop));
-        this.setState({ busStops });
+      .then(busStopsFetched => {
+        busStopsFetched = busStopsFetched.stops.filter(
+          stop => stop.category === "bus"
+        );
+        busStopsFetched = busStopsFetched.map(stop => normalizeMarker(stop));
+        setBusStops(busStopsFetched);
       });
   }
 
-  getBuses() {
+  function getBuses() {
     fetch(`${API_HOST}/bus/vehicleInfo/vehicles`)
       .then(response => response.json())
-      .then(buses => {
-        if (buses.status === 500) {
-          this.setState({ buses: [] });
+      .then(busesFetched => {
+        if (busesFetched.status === 500) {
+          console.error("Buses responded with 500");
           return;
         }
-        buses = buses.vehicles.filter(
+        busesFetched = busesFetched.vehicles.filter(
           bus =>
             !bus.deleted &&
             bus.latitude !== undefined &&
             bus.longitude !== undefined
         );
-        buses = buses.map(tram => this.normalizeMarker(tram));
-        this.setState({ buses });
+        busesFetched = busesFetched.map(tram => normalizeMarker(tram));
+        setBuses(busesFetched);
       });
   }
 
-  toggleDisplayBusStops(event) {
-    this.setState({
-      displayBusStops: event.target.checked
-    });
+  function toggleDisplayBusStops(event) {
+    setDisplayBusStops(event.target.checked);
   }
 
-  toggleDisplayBuses(event) {
-    this.setState({
-      displayBuses: event.target.checked
-    });
+  function toggleDisplayBuses(event) {
+    setDisplayBuses(event.target.checked);
   }
 
-  toggleDisplayTramStops(event) {
-    this.setState({
-      displayTramStops: event.target.checked
-    });
+  function toggleDisplayTramStops(event) {
+    setDisplayTramStops(event.target.checked);
   }
 
-  toggleDisplayTrams(event) {
-    this.setState({
-      displayTrams: event.target.checked
-    });
+  function toggleDisplayTrams(event) {
+    setDisplayTrams(event.target.checked);
   }
 
-  render() {
-    if (
-      this.state.tramStops === undefined ||
-      this.state.trams === undefined ||
-      this.state.busStops === undefined ||
-      this.state.buses === undefined
-    ) {
-      return (
-        <div className="loader-wrapper">
-          <div className="loader-box">
-            <img src="img/tram.svg" alt="App logo" className="app-logo" />
-            <div>
-              <h1 className="app-title">Cracow Trams</h1>
-              <BarLoader widthUnit={"%"} width={100} />
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    const trams = this.state.trams;
-    const tramStops = this.state.tramStops;
-    const busStops = this.state.busStops;
-    const buses = this.state.buses;
-
-    return (
-      <div className="App">
-        <form className="map-options">
-          <label className="option">
-            Pokaż przystanki autobusowe:
-            <input
-              type="checkbox"
-              checked={this.state.displayBusStops}
-              onChange={this.toggleDisplayBusStops}
-            />
-          </label>
-          <label className="option">
-            Pokaż autobusy:
-            <input
-              type="checkbox"
-              checked={this.state.displayBuses}
-              onChange={this.toggleDisplayBuses}
-            />
-          </label>
-          <label className="option">
-            Pokaż przystanki tramwajowe:
-            <input
-              type="checkbox"
-              checked={this.state.displayTramStops}
-              onChange={this.toggleDisplayTramStops}
-            />
-          </label>
-          <label className="option">
-            Pokaż tramwaje:
-            <input
-              type="checkbox"
-              checked={this.state.displayTrams}
-              onChange={this.toggleDisplayTrams}
-            />
-          </label>
-        </form>
-        <MapContainer
-          tramStops={this.state.displayTramStops ? tramStops : []}
-          trams={this.state.displayTrams ? trams : []}
-          busStops={this.state.displayBusStops ? busStops : []}
-          buses={this.state.displayBuses ? buses : []}
-        />
-      </div>
-    );
+  function toggleClustering(event) {
+    setClustering(event.target.checked);
   }
+
+  function openTramDetails(tram) {
+    setMarkerOpen(true);
+    setMarkerObjectType("tram");
+    setOpenTram(tram);
+  }
+
+  function closeTramDetails() {
+    setMarkerOpen(false);
+    setMarkerObjectType(null);
+    setOpenTram(null);
+    setVehiclePath(null);
+  }
+
+  function openTramStopDetails(tramStop) {
+    setMarkerOpen(true);
+    setMarkerObjectType("tram_stop");
+    setOpenTramStop(tramStop);
+  }
+
+  function closeTramStopDetails() {
+    setMarkerOpen(false);
+    setMarkerObjectType(null);
+    setOpenTramStop(null);
+  }
+
+  function openBusDetails(bus) {
+    setMarkerOpen(true);
+    setMarkerObjectType("bus");
+    setOpenBus(bus);
+  }
+
+  function closeBusDetails() {
+    setMarkerOpen(false);
+    setMarkerObjectType(null);
+    setOpenBus(null);
+  }
+
+  function openBusStopDetails(busStop) {
+    setMarkerOpen(true);
+    setMarkerObjectType("bus_stop");
+    setOpenBusStop(busStop);
+  }
+
+  function closeBusStopDetails() {
+    setMarkerOpen(false);
+    setMarkerObjectType(null);
+    setOpenBusStop(null);
+  }
+
+  if (
+    //tramStops === undefined || TODO
+    //trams === undefined ||
+    busStops === undefined ||
+    buses === undefined
+  ) {
+    return <AppLoader />;
+  }
+
+  return (
+    <div className="App">
+      <MapOptions
+        displayBusStops={displayBusStops}
+        toggleDisplayBusStops={toggleDisplayBusStops}
+        displayBuses={displayBuses}
+        toggleDisplayBuses={toggleDisplayBuses}
+        displayTrams={displayTrams}
+        toggleDisplayTrams={toggleDisplayTrams}
+        displayTramStops={displayTramStops}
+        toggleDisplayTramStops={toggleDisplayTramStops}
+        clustering={clustering}
+        toggleClustering={toggleClustering}
+      />
+      {(() => {
+        if (markerOpen) {
+          switch (markerObjectType) {
+            case "tram": {
+              if (openTram === null) {
+                return;
+              }
+              return <TramDetails onClose={closeTramDetails} tram={openTram} />;
+            }
+            case "tram_stop":
+              if (openTramStop === null) {
+                return;
+              }
+              return (
+                <TramStopDetails
+                  onClose={closeTramStopDetails}
+                  tramStop={openTramStop}
+                />
+              );
+            case "bus":
+              if (openBus === null) {
+                return;
+              }
+              return <BusDetails onClose={closeBusDetails} bus={openBus} />;
+            case "bus_stop":
+              if (openBusStop === null) {
+                return;
+              }
+              return (
+                <BusStopDetails
+                  onClose={closeBusStopDetails}
+                  busStop={openBusStop}
+                />
+              );
+            default:
+              break;
+          }
+        }
+      })()}
+
+      <MapContainer
+        tramStops={displayTramStops ? tramStops : []}
+        trams={displayTrams ? trams : []}
+        busStops={displayBusStops ? busStops : []}
+        buses={displayBuses ? buses : []}
+        clustering={clustering}
+        onTramOpen={openTramDetails}
+        onTramStopOpen={openTramStopDetails}
+        onBusOpen={openBusDetails}
+        onBusStopOpen={openBusStopDetails}
+        setVehiclePath={setVehiclePath}
+        vehiclePath={vehiclePath}
+      />
+    </div>
+  );
 }
-
-export default App;

@@ -1,14 +1,24 @@
 {
-  "name": "cracow-trams-front",
-  "version": "0.1.0",
+  "name": "cracow-transit",
+  "version": "0.2.0",
+  "description": "Showing Cracow Buses & Trams real time!",
+  "engines": {
+    "node": "12.13.0"
+  },
   "private": true,
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.25",
+    "@fortawesome/free-solid-svg-icons": "^5.11.2",
+    "@fortawesome/react-fontawesome": "^0.1.7",
     "js-joda": "^1.9.2",
-    "leaflet": "^1.4.0",
+    "leaflet": "^1.5.1",
     "leaflet-rotatedmarker": "^0.2.0",
+    "leaflet.markercluster": "^1.4.1",
+    "prop-types": "^15.7.2",
     "react": "^16.6.3",
     "react-dom": "^16.6.3",
-    "react-leaflet": "^2.1.4",
+    "react-leaflet": "^2.5.0",
+    "react-leaflet-markercluster": "^2.0.0-rc3",
     "react-scripts": "^3.1.1",
     "react-spinners": "^0.5.1"
   },
@@ -16,8 +26,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "heroku-postbuild": "yarn build"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": "react-app"

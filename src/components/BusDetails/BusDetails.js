@@ -26,12 +26,10 @@ export default function BusDetails({ bus, onClose }) {
 
       if (fetchedBusStops && fetchedBusStops.length > 0) {
         fetchedBusNextStop = fetchedBusStops[0].stop.shortName;
-        console.log("fetchedBusNextStop:", fetchedBusNextStop);
       }
 
       if (fetchedBusNextStop !== undefined) {
         const fetchedBusDelay = await getCurrentBusDelay(fetchedBusNextStop);
-        console.log("fetchedBusDelay:", fetchedBusDelay);
         setCurrentBusDelay(fetchedBusDelay);
       }
     }
@@ -49,7 +47,6 @@ export default function BusDetails({ bus, onClose }) {
   }, [bus.id]);
 
   async function getCurrentBusStops() {
-    console.log("getCurrentTramStops(): start");
     try {
       let response = await fetch(
         `${API_HOST}/bus/tripInfo/tripPassages/${bus.tripId}`
@@ -89,8 +86,6 @@ export default function BusDetails({ bus, onClose }) {
   }
 
   async function getCurrentBusDelay(nextStop) {
-    console.log("getting bus delay");
-
     try {
       const response = await fetch(
         `${API_HOST}/bus/passageInfo/stops/${nextStop}`

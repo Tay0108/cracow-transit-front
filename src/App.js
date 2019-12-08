@@ -29,6 +29,8 @@ export default function App() {
   const [openBusStop, setOpenBusStop] = useState(null);
   const [openTramStop, setOpenTramStop] = useState(null);
 
+  const [vehiclePath, setVehiclePath] = useState(null);
+
   useEffect(() => {
     getTramStops();
     getBusStops();
@@ -137,60 +139,49 @@ export default function App() {
   }
 
   function openTramDetails(tram) {
-    console.log("opening tram details");
-    console.log(tram);
     setMarkerOpen(true);
     setMarkerObjectType("tram");
     setOpenTram(tram);
   }
 
   function closeTramDetails() {
-    console.log("closing tram details");
     setMarkerOpen(false);
     setMarkerObjectType(null);
     setOpenTram(null);
+    setVehiclePath(null);
   }
 
   function openTramStopDetails(tramStop) {
-    console.log("opening tramStop details");
-    console.log(tramStop);
     setMarkerOpen(true);
     setMarkerObjectType("tram_stop");
     setOpenTramStop(tramStop);
   }
 
   function closeTramStopDetails() {
-    console.log("closing tramStop details");
     setMarkerOpen(false);
     setMarkerObjectType(null);
     setOpenTramStop(null);
   }
 
   function openBusDetails(bus) {
-    console.log("opening bus details");
-    console.log(bus);
     setMarkerOpen(true);
     setMarkerObjectType("bus");
     setOpenBus(bus);
   }
 
   function closeBusDetails() {
-    console.log("closing bus details");
     setMarkerOpen(false);
     setMarkerObjectType(null);
     setOpenBus(null);
   }
 
   function openBusStopDetails(busStop) {
-    console.log("opening busStop details");
-    console.log(busStop);
     setMarkerOpen(true);
     setMarkerObjectType("bus_stop");
     setOpenBusStop(busStop);
   }
 
   function closeBusStopDetails() {
-    console.log("closing busStop details");
     setMarkerOpen(false);
     setMarkerObjectType(null);
     setOpenBusStop(null);
@@ -269,6 +260,8 @@ export default function App() {
         onTramStopOpen={openTramStopDetails}
         onBusOpen={openBusDetails}
         onBusStopOpen={openBusStopDetails}
+        setVehiclePath={setVehiclePath}
+        vehiclePath={vehiclePath}
       />
     </div>
   );

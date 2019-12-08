@@ -11,7 +11,6 @@ export default function TramStopDetails({ tramStop, onClose }) {
   const [tramStopPassages, setTramStopPassages] = useState(undefined);
 
   function getTramStopPassages() {
-    console.log("getTramStopPassages:", tramStop);
     fetch(`${API_HOST}/tram/passageInfo/stops/${tramStop.shortName}`)
       .then(response => response.json())
       .then(fetchedPassages => {
@@ -19,7 +18,6 @@ export default function TramStopDetails({ tramStop, onClose }) {
           console.error("Fetching passages for tram stop returned 500");
           return;
         }
-        console.log("fetchedPassages:", fetchedPassages);
         fetchedPassages = fetchedPassages.actual;
         fetchedPassages = fetchedPassages.filter(
           passage =>
@@ -42,7 +40,7 @@ export default function TramStopDetails({ tramStop, onClose }) {
 
     return (
       <li key={passage.passageid}>
-        <div className="passage-number">{passage.patternText}</div>w kierunku
+        <div className="passage-number">{passage.patternText}</div>w kierunku{" "}
         {passage.direction} o {passage.plannedTime}
         <span className="delay-text">{delay > 0 ? `(+${delay}min)` : ""}</span>
       </li>
@@ -56,7 +54,6 @@ export default function TramStopDetails({ tramStop, onClose }) {
     getTramStopPassages();
 
     const tramStopIntervalId = setInterval(() => {
-      console.log("fetching data for tramStop");
       getTramStopPassages();
     }, 5000);
 

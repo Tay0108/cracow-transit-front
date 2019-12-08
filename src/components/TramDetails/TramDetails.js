@@ -3,8 +3,6 @@ import "../../styles/marker-details.css";
 import "./tram-details.css";
 import API_HOST from "../../API_HOST";
 import { ChronoUnit, LocalTime } from "js-joda";
-import normalizeCoords from "../../util/normalizeCoords";
-import { Polyline } from "react-leaflet";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import DetailsLoader from "../DetailsLoader/DetailsLoader";
@@ -12,30 +10,22 @@ import DetailsLoader from "../DetailsLoader/DetailsLoader";
 // TODO: napisac hooka ktory jednorazowo fetchuje dane dla autobusu lub tramwaju a tu zrobic metode refresh ktora go uzywa
 
 export default function TramDetails({ tram, onClose }) {
-  const [showTramPath, setShowTramPath] = useState(false); // TODO
-  const [tramPath, setTramPath] = useState(undefined);
-
   const [currentTramStops, setCurrentTramStops] = useState(undefined);
   const [currentTramDelay, setCurrentTramDelay] = useState(undefined);
 
   useEffect(() => {
     async function fetchData() {
-      setShowTramPath(true);
-      // getTramWaypoints();
       let fetchedTramStops = await getCurrentTramStops();
-
       setCurrentTramStops(fetchedTramStops);
 
       let fetchedTramNextStop;
 
       if (fetchedTramStops && fetchedTramStops.length > 0) {
         fetchedTramNextStop = fetchedTramStops[0].stop.shortName;
-        console.log("fetchedTramNextStop:", fetchedTramStops[0].stop.shortName);
       }
 
       if (fetchedTramNextStop !== undefined) {
         const fetchedTramDelay = await getCurrentTramDelay(fetchedTramNextStop);
-        console.log("fetchedTramDelay:", fetchedTramDelay);
         setCurrentTramDelay(fetchedTramDelay);
       }
     }
@@ -53,7 +43,6 @@ export default function TramDetails({ tram, onClose }) {
   }, [tram.id]);
 
   async function getCurrentTramStops() {
-    console.log("getCurrentTramStops(): start");
     try {
       let response = await fetch(
         `${API_HOST}/tram/tripInfo/tripPassages/${tram.tripId}`
@@ -69,8 +58,6 @@ export default function TramDetails({ tram, onClose }) {
   }
 
   async function getCurrentTramDelay(nextStop) {
-    console.log("get tram delay");
-
     try {
       const response = await fetch(
         `${API_HOST}/tram/passageInfo/stops/${nextStop}`
@@ -116,30 +103,6 @@ export default function TramDetails({ tram, onClose }) {
     );
   }
 
-  async function getTramWaypoints() {
-    fetch(`${API_HOST}/tram/pathInfo/vehicle/${tram.id}`)
-      .then(response => response.json())
-      .then(fetchedPath => {
-        fetchedPath = fetchedPath.paths[0];
-        fetchedPath.wayPoints = fetchedPath.wayPoints.map(wayPoint =>
-          normalizeCoords(wayPoint)
-        );
-        setTramPath(fetchedPath);
-      });
-  }
-
-  function displayTramPath() {
-    if (tramPath === undefined) {
-      return ""; // TODO
-    }
-    if (showTramPath) {
-      return (
-        <Polyline positions={tramPath.wayPoints} color={"#4286f4"} weight={5} />
-      );
-    }
-    return ""; // TODO
-  }
-
   if (tram === null) {
     return null;
   }
@@ -181,7 +144,7 @@ export default function TramDetails({ tram, onClose }) {
           {currentTramStops.map(stop => displayTramStop(stop))}
         </ul>
       </div>
-      {displayTramPath()}
+
     </>
   );
 }

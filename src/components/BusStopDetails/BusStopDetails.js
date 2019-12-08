@@ -40,7 +40,7 @@ export default function BusStopDetails({ busStop, onClose }) {
 
     return (
       <li key={passage.passageid}>
-        <div className="passage-number">{passage.patternText}</div> w kierunku
+        <div className="passage-number">{passage.patternText}</div> w kierunku{" "}
         {passage.direction} o {passage.plannedTime}
         <span className="delay-text">{delay > 0 ? `(+${delay}min)` : ""}</span>
       </li>
@@ -51,7 +51,6 @@ export default function BusStopDetails({ busStop, onClose }) {
     getBusStopPassages();
 
     const busStopIntervalId = setInterval(() => {
-      console.log("fetching data for busStop");
       getBusStopPassages();
     }, 5000);
 

@@ -1,5 +1,5 @@
-import React from "react";
-import { Map, TileLayer } from "react-leaflet";
+import React, { useState } from "react";
+import { Map, Polyline, TileLayer } from "react-leaflet";
 import "./map-container.css";
 import TramStop from "../TramStop/TramStop";
 import Tram from "../Tram/Tram";
@@ -16,7 +16,9 @@ export default function MapContainer({
   onTramOpen,
   onTramStopOpen,
   onBusOpen,
-  onBusStopOpen
+  onBusStopOpen,
+  vehiclePath,
+  setVehiclePath
 }) {
   const initialPosition = [50.0613888889, 19.9383333333];
   const initialZoom = 13;
@@ -32,7 +34,14 @@ export default function MapContainer({
   }
 
   function displayTram(tram) {
-    return <Tram key={tram.id} info={tram} onMarkerOpen={onTramOpen} />;
+    return (
+      <Tram
+        key={tram.id}
+        info={tram}
+        onMarkerOpen={onTramOpen}
+        setTramPath={setVehiclePath}
+      />
+    );
   }
 
   function displayBusStop(busStop) {
@@ -42,7 +51,27 @@ export default function MapContainer({
   }
 
   function displayBus(bus) {
-    return <Bus key={bus.id} info={bus} onMarkerOpen={onBusOpen} />;
+    return (
+      <Bus
+        key={bus.id}
+        info={bus}
+        onMarkerOpen={onBusOpen}
+        onShowPath={setVehiclePath}
+      />
+    );
+  }
+
+  function displayVehiclePath() {
+    if (vehiclePath === undefined || vehiclePath === null) {
+      return ""; // TODO
+    }
+    return (
+      <Polyline
+        positions={vehiclePath.wayPoints}
+        color={"#4286f4"}
+        weight={5}
+      />
+    );
   }
 
   if (
@@ -81,6 +110,7 @@ export default function MapContainer({
           {buses.map(bus => displayBus(bus))}
         </>
       )}
+      {displayVehiclePath()}
     </Map>
   );
 }

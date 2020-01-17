@@ -5,8 +5,7 @@ import API_HOST from "./API_HOST";
 import MapOptions from "./components/MapOptions/MapOptions";
 import AppLoader from "./components/AppLoader/AppLoader";
 import VehicleDetails from "./components/VehicleDetails/VehicleDetails";
-import TramStopDetails from "./components/TramStopDetails/TramStopDetails";
-import BusStopDetails from "./components/BusStopDetails/BusStopDetails";
+import StopDetails from "./components/StopDetails/StopDetails";
 
 export default function App() {
   const [trams, setTrams] = useState(undefined);
@@ -223,9 +222,9 @@ export default function App() {
                 return;
               }
               return (
-                <TramStopDetails
+                <StopDetails
                   onClose={closeTramStopDetails}
-                  tramStop={openTramStop}
+                  stop={openTramStop}
                 />
               );
             case "bus":
@@ -238,9 +237,9 @@ export default function App() {
                 return;
               }
               return (
-                <BusStopDetails
+                <StopDetails
                   onClose={closeBusStopDetails}
-                  busStop={openBusStop}
+                  stop={openBusStop}
                 />
               );
             default:

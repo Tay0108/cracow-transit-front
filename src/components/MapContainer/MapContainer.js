@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Map, Polyline, TileLayer } from "react-leaflet";
 import "./map-container.css";
 import TramStop from "../TramStop/TramStop";

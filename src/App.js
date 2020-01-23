@@ -4,10 +4,8 @@ import MapContainer from "./components/MapContainer/MapContainer";
 import API_HOST from "./API_HOST";
 import MapOptions from "./components/MapOptions/MapOptions";
 import AppLoader from "./components/AppLoader/AppLoader";
-import TramDetails from "./components/TramDetails/TramDetails";
-import TramStopDetails from "./components/TramStopDetails/TramStopDetails";
-import BusDetails from "./components/BusDetails/BusDetails";
-import BusStopDetails from "./components/BusStopDetails/BusStopDetails";
+import VehicleDetails from "./components/VehicleDetails/VehicleDetails";
+import StopDetails from "./components/StopDetails/StopDetails";
 
 export default function App() {
   const [trams, setTrams] = useState(undefined);
@@ -217,31 +215,31 @@ export default function App() {
               if (openTram === null) {
                 return;
               }
-              return <TramDetails onClose={closeTramDetails} tram={openTram} />;
+              return <VehicleDetails onClose={closeTramDetails} vehicle={openTram} />;
             }
             case "tram_stop":
               if (openTramStop === null) {
                 return;
               }
               return (
-                <TramStopDetails
+                <StopDetails
                   onClose={closeTramStopDetails}
-                  tramStop={openTramStop}
+                  stop={openTramStop}
                 />
               );
             case "bus":
               if (openBus === null) {
                 return;
               }
-              return <BusDetails onClose={closeBusDetails} bus={openBus} />;
+              return <VehicleDetails onClose={closeBusDetails} vehicle={openBus} />;
             case "bus_stop":
               if (openBusStop === null) {
                 return;
               }
               return (
-                <BusStopDetails
+                <StopDetails
                   onClose={closeBusStopDetails}
-                  busStop={openBusStop}
+                  stop={openBusStop}
                 />
               );
             default:

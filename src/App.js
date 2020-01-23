@@ -1,17 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import "./App.css";
 import MapContainer from "./components/MapContainer/MapContainer";
-import API_HOST from "./API_HOST";
 import MapOptions from "./components/MapOptions/MapOptions";
 import AppLoader from "./components/AppLoader/AppLoader";
 import VehicleDetails from "./components/VehicleDetails/VehicleDetails";
 import StopDetails from "./components/StopDetails/StopDetails";
+import useTramStops from "./hooks/useTramStops";
+import useBusStops from "./hooks/useBusStops";
+import useTrams from "./hooks/useTrams";
+import useBuses from "./hooks/useBuses";
 
 export default function App() {
-  const [trams, setTrams] = useState(undefined);
-  const [tramStops, setTramStops] = useState(undefined);
-  const [buses, setBuses] = useState(undefined);
-  const [busStops, setBusStops] = useState(undefined);
+  const trams = useTrams();
+  const tramStops = useTramStops();
+  const buses = useBuses();
+  const busStops = useBusStops();
 
   const [displayBuses, setDisplayBuses] = useState(false);
   const [displayBusStops, setDisplayBusStops] = useState(false);
@@ -28,93 +31,6 @@ export default function App() {
   const [openTramStop, setOpenTramStop] = useState(null);
 
   const [vehiclePath, setVehiclePath] = useState(null);
-
-  useEffect(() => {
-    getTramStops();
-    getBusStops();
-    getTrams();
-    getBuses();
-    setInterval(() => {
-      getTrams();
-      getBuses();
-    }, 7000);
-    // eslint-disable-next-line
-  }, []);
-
-  function normalizeMarker(obj) {
-    if (obj.latitude !== undefined && obj.longitude !== undefined) {
-      obj.latitude /= 1000.0 * 3600.0;
-      obj.longitude /= 1000.0 * 3600.0;
-    }
-    return obj;
-  }
-
-  function getTramStops() {
-    fetch(`${API_HOST}/tram/stopInfo/stops`)
-      .then(response => response.json())
-      .then(tramStopsFetched => {
-        if(tramStopsFetched.status === 500) {
-          console.log("Tram stops responded with 500");
-          return;
-        }
-
-        tramStopsFetched = tramStopsFetched.stops.filter(
-          stop => stop.category === "tram"
-        );
-        tramStopsFetched = tramStopsFetched.map(stop => normalizeMarker(stop));
-        setTramStops(tramStopsFetched);
-      });
-  }
-
-  function getTrams() {
-    fetch(`${API_HOST}/tram/vehicleInfo/vehicles`)
-      .then(response => response.json())
-      .then(tramsFetched => {
-        if (tramsFetched.status === 500) {
-          console.error("Trams responded with 500");
-          return;
-        }
-        tramsFetched = tramsFetched.vehicles.filter(
-          tram =>
-            !tram.deleted &&
-            tram.latitude !== undefined &&
-            tram.longitude !== undefined
-        );
-        tramsFetched = tramsFetched.map(tram => normalizeMarker(tram));
-        setTrams(tramsFetched);
-      });
-  }
-
-  function getBusStops() {
-    fetch(`${API_HOST}/bus/stopInfo/stops`)
-      .then(response => response.json())
-      .then(busStopsFetched => {
-        busStopsFetched = busStopsFetched.stops.filter(
-          stop => stop.category === "bus"
-        );
-        busStopsFetched = busStopsFetched.map(stop => normalizeMarker(stop));
-        setBusStops(busStopsFetched);
-      });
-  }
-
-  function getBuses() {
-    fetch(`${API_HOST}/bus/vehicleInfo/vehicles`)
-      .then(response => response.json())
-      .then(busesFetched => {
-        if (busesFetched.status === 500) {
-          console.error("Buses responded with 500");
-          return;
-        }
-        busesFetched = busesFetched.vehicles.filter(
-          bus =>
-            !bus.deleted &&
-            bus.latitude !== undefined &&
-            bus.longitude !== undefined
-        );
-        busesFetched = busesFetched.map(tram => normalizeMarker(tram));
-        setBuses(busesFetched);
-      });
-  }
 
   function toggleDisplayBusStops(event) {
     setDisplayBusStops(event.target.checked);
@@ -146,7 +62,7 @@ export default function App() {
     setMarkerOpen(false);
     setMarkerObjectType(null);
     setOpenTram(null);
-    setVehiclePath(null);
+    setVehiclePath(null); // TODO
   }
 
   function openTramStopDetails(tramStop) {

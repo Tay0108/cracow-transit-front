@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "./tram.css";
 import { Marker } from "react-leaflet";
 import L from "leaflet";
@@ -11,7 +11,14 @@ const tramIcon = new L.Icon({
   iconSize: [25, 25]
 });
 
+const activeTramIcon = new L.Icon({
+  iconUrl: "/img/active-tram.svg",
+  iconRetinaUrl: "/img/active-tram.svg",
+  iconSize: [25, 25]
+});
+
 export default function Tram({ info, onMarkerOpen, setTramPath }) {
+  const [isActive, setActive] = useState(false);
 
   async function getTramPath() {
     const response = await fetch(
@@ -24,7 +31,7 @@ export default function Tram({ info, onMarkerOpen, setTramPath }) {
   }
 
   async function openMarker() {
-    // TODO: add some arrow or change icon color
+    setActive(true);
     onMarkerOpen(info);
     const tramPath = await getTramPath();
     setTramPath(tramPath);
@@ -32,6 +39,7 @@ export default function Tram({ info, onMarkerOpen, setTramPath }) {
 
   function closeMarker() {
     // TODO: revert to previous icon
+    setActive(false);
     setTramPath(null);
   }
 
@@ -40,7 +48,7 @@ export default function Tram({ info, onMarkerOpen, setTramPath }) {
       <Marker
         key={info.id}
         position={[info.latitude, info.longitude]}
-        icon={tramIcon}
+        icon={isActive ? activeTramIcon : tramIcon}
         onClick={openMarker}
       />
     </>

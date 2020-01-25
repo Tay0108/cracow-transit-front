@@ -1,5 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import "./map-options.css";
+import MapOptionsButton from "../MapOptionsButton/MapOptionsButton";
+import {faTimes} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 export default function MapOptions({
   displayBusStops,
@@ -13,8 +16,17 @@ export default function MapOptions({
   clustering,
   toggleClustering
 }) {
+    const [isOpen, setIsOpen] = useState(true);
+
+    if(!isOpen) {
+        return <MapOptionsButton onClick={() => setIsOpen(true)}/>
+    }
+
   return (
     <form className="map-options">
+        <button className="close-options" onClick={() => setIsOpen(false)}>
+            <FontAwesomeIcon icon={faTimes} />
+        </button>
       <label className="option">
         Pokaż przystanki autobusowe:
         <input

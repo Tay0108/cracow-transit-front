@@ -12,7 +12,7 @@ import L from "leaflet";
 const youIcon = new L.Icon({
   iconUrl: "/img/you.svg",
   iconRetinaUrl: "/img/you.svg",
-  iconSize: [45, 45]
+  iconSize: [35, 35]
 });
 
 export default function MapContainer({

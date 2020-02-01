@@ -1,11 +1,19 @@
 import React from "react";
-import { Map, Polyline, TileLayer } from "react-leaflet";
+import {Map, Marker, Polyline, TileLayer} from "react-leaflet";
 import "./map-container.css";
 import TramStop from "../TramStop/TramStop";
 import Tram from "../Tram/Tram";
 import Bus from "../Bus/Bus";
 import BusStop from "../BusStop/BusStop";
 import MarkerClusterGroup from "react-leaflet-markercluster";
+import useGeolocation from "../../hooks/useGeolocation";
+import L from "leaflet";
+
+const youIcon = new L.Icon({
+  iconUrl: "/img/you.svg",
+  iconRetinaUrl: "/img/you.svg",
+  iconSize: [45, 45]
+});
 
 export default function MapContainer({
   buses,
@@ -22,6 +30,7 @@ export default function MapContainer({
 }) {
   const initialPosition = [50.0613888889, 19.9383333333];
   const initialZoom = 13;
+  const userPosition = useGeolocation();
 
   function displayTramStop(tramStop) {
     return (
@@ -110,6 +119,11 @@ export default function MapContainer({
           {buses.map(bus => displayBus(bus))}
         </>
       )}
+      {userPosition.error ? "" : <Marker
+          key={userPosition}
+          position={[userPosition.latitude, userPosition.longitude]}
+          icon={youIcon}
+      />}
       {displayVehiclePath()}
     </Map>
   );

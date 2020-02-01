@@ -32,6 +32,8 @@ export default function MapContainer({
   const initialZoom = 13;
   const userPosition = useGeolocation();
 
+  console.log("userPosition: ", userPosition);
+
   function displayTramStop(tramStop) {
     return (
       <TramStop
@@ -119,7 +121,7 @@ export default function MapContainer({
           {buses.map(bus => displayBus(bus))}
         </>
       )}
-      {userPosition.error ? "" : <Marker
+      {userPosition.error && userPosition.latitude && userPosition.longitude ? "" : <Marker
           key={userPosition}
           position={[userPosition.latitude, userPosition.longitude]}
           icon={youIcon}

@@ -59,6 +59,18 @@ export default function MapContainer({
     );
   }
 
+  function displayUserPosition(userPosition) {
+    if(userPosition.error || !userPosition.latitude || !userPosition.longitude) {
+      return null;
+    }
+    return (
+        <Marker
+            position={[userPosition.latitude, userPosition.longitude]}
+            icon={youIcon}
+        />
+    );
+  }
+
   function displayBus(bus) {
     return (
       <Bus
@@ -119,11 +131,7 @@ export default function MapContainer({
           {buses.map(bus => displayBus(bus))}
         </>
       )}
-      {userPosition.error && !userPosition.latitude && !userPosition.longitude ? "" : <Marker
-          key={userPosition}
-          position={[userPosition.latitude, userPosition.longitude]}
-          icon={youIcon}
-      />}
+      {displayUserPosition(userPosition)}
       {displayVehiclePath()}
     </Map>
   );

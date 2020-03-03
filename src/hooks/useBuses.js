@@ -23,6 +23,7 @@ export default function useBuses() {
                 }
                 busesFetched = busesFetched.vehicles.filter(
                     bus =>
+                        bus !== null &&
                         !bus.deleted &&
                         bus.latitude !== undefined &&
                         bus.longitude !== undefined

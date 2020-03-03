@@ -44,13 +44,11 @@ export default function Tram({ info, onMarkerOpen, setTramPath }) {
   }
 
   return (
-    <>
       <Marker
         key={info.id}
         position={[info.latitude, info.longitude]}
         icon={isActive ? activeTramIcon : tramIcon}
         onClick={openMarker}
       />
-    </>
   );
 }

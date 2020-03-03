@@ -23,6 +23,7 @@ export default function useTrams() {
                 }
                 tramsFetched = tramsFetched.vehicles.filter(
                     tram =>
+                        tram !== null &&
                         !tram.deleted &&
                         tram.latitude !== undefined &&
                         tram.longitude !== undefined

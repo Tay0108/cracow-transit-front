@@ -22,7 +22,7 @@
     "react-leaflet-markercluster": "^2.0.0",
     "react-scripts": "^3.4.1",
     "react-spinners": "^0.5.1",
-    "serve": "^9.4.0"
+    "serve": "^10.1.2"
   },
   "scripts": {
     "start": "serve -s build",

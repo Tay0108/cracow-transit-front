@@ -1,5 +1,5 @@
 import React from "react";
-import {Map, Marker, Polyline, TileLayer} from "react-leaflet";
+import { Map, Marker, Polyline, TileLayer } from "react-leaflet";
 import "./map-container.css";
 import TramStop from "../TramStop/TramStop";
 import Tram from "../Tram/Tram";
@@ -60,14 +60,14 @@ export default function MapContainer({
   }
 
   function displayUserPosition(userPosition) {
-    if(userPosition.error || !userPosition.latitude || !userPosition.longitude) {
+    if (userPosition.error || !userPosition.latitude || !userPosition.longitude) {
       return null;
     }
     return (
-        <Marker
-            position={[userPosition.latitude, userPosition.longitude]}
-            icon={youIcon}
-        />
+      <Marker
+        position={[userPosition.latitude, userPosition.longitude]}
+        icon={youIcon}
+      />
     );
   }
 

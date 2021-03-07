@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import API_HOST from "../API_HOST";
+import { VEHICLE_REFRESH_TIME } from "../config";
 import normalizeMarker from "../util/normalizeMarker";
 
 export default function useTrams() {
@@ -9,7 +10,7 @@ export default function useTrams() {
         getTrams();
         setInterval(() => {
             getTrams();
-        }, 7000);
+        }, VEHICLE_REFRESH_TIME);
         // eslint-disable-next-line
     }, []);
 

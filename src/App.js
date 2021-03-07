@@ -62,7 +62,7 @@ export default function App() {
     setMarkerOpen(false);
     setMarkerObjectType(null);
     setOpenTram(null);
-    setVehiclePath(null); // TODO
+    setVehiclePath(null);
   }
 
   function openTramStopDetails(tramStop) {

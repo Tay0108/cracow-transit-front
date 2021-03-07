@@ -1,24 +1,38 @@
 import React, { useState } from "react";
-import "./tram.css";
+import "./tram.scss";
 import { Marker } from "react-leaflet";
 import L from "leaflet";
 import API_HOST from "../../API_HOST";
 import normalizeCoords from "../../util/normalizeCoords";
+import ActiveTramSvg from "./active-tram.svg";
+import TramSvg from "./tram.svg";
 
-const tramIcon = new L.Icon({
-  iconUrl: "/img/tram.svg",
-  iconRetinaUrl: "/img/tram.svg",
-  iconSize: [25, 25]
-});
+function createTramIcon(tramNumber, isActive) {
+  if (isActive) {
+    return new L.divIcon({
+      className: "tram-wrapper",
+      html: `<div class="tram">
+      <div class="tram-number">${tramNumber}</div>
+      <img class="tram-icon" src=${ActiveTramSvg} alt="tram" />
+    </div>`
+    });
+  }
 
-const activeTramIcon = new L.Icon({
-  iconUrl: "/img/active-tram.svg",
-  iconRetinaUrl: "/img/active-tram.svg",
-  iconSize: [25, 25]
-});
+  return new L.divIcon({
+    className: "tram-wrapper",
+    html: `<div class="tram">
+      <div class="tram-number">${tramNumber}</div>
+      <img class="tram-icon" src=${TramSvg} alt="tram" />
+    </div>`
+  });
+}
 
 export default function Tram({ info, onMarkerOpen, setTramPath }) {
   const [isActive, setActive] = useState(false);
+
+  const tramNumber = info.name.split(" ")[0];
+
+  const tramIcon = createTramIcon(tramNumber, isActive);
 
   async function getTramPath() {
     const response = await fetch(
@@ -44,11 +58,11 @@ export default function Tram({ info, onMarkerOpen, setTramPath }) {
   }
 
   return (
-      <Marker
-        key={info.id}
-        position={[info.latitude, info.longitude]}
-        icon={isActive ? activeTramIcon : tramIcon}
-        onClick={openMarker}
-      />
+    <Marker
+      key={info.id}
+      position={[info.latitude, info.longitude]}
+      icon={tramIcon}
+      onClick={openMarker}
+    />
   );
 }

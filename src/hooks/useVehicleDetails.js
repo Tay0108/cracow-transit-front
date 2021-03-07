@@ -1,6 +1,7 @@
-import {useState, useEffect} from "react";
+import { useState, useEffect } from "react";
 import API_HOST from "../API_HOST";
-import {ChronoUnit, LocalTime} from "js-joda";
+import { VEHICLE_REFRESH_TIME } from "../config";
+import { ChronoUnit, LocalTime } from "js-joda";
 
 export default function useVehicleDetails(vehicle) {
     const [vehicleStops, setVehicleStops] = useState([]);
@@ -27,7 +28,7 @@ export default function useVehicleDetails(vehicle) {
 
         const vehicleIntervalId = setInterval(() => {
             fetchData();
-        }, 7000);
+        }, VEHICLE_REFRESH_TIME);
 
         return () => {
             clearInterval(vehicleIntervalId);
@@ -38,9 +39,9 @@ export default function useVehicleDetails(vehicle) {
         try {
             let url;
 
-            if(vehicle.category === "tram") {
+            if (vehicle.category === "tram") {
                 url = `${API_HOST}/tram/tripInfo/tripPassages/${vehicle.tripId}`
-            } else if(vehicle.category === "bus") {
+            } else if (vehicle.category === "bus") {
                 url = `${API_HOST}/bus/tripInfo/tripPassages/${vehicle.tripId}`;
             }
 
@@ -58,9 +59,9 @@ export default function useVehicleDetails(vehicle) {
         try {
             let url;
 
-            if(vehicle.category === "tram") {
+            if (vehicle.category === "tram") {
                 url = `${API_HOST}/tram/passageInfo/stops/${nextStop}`
-            } else if(vehicle.category === "bus") {
+            } else if (vehicle.category === "bus") {
                 url = `${API_HOST}/bus/passageInfo/stops/${nextStop}`
             }
 

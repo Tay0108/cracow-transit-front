@@ -1,0 +1,26 @@
+.tram-wrapper {
+  background: none;
+  border: none;
+  width: 12px;
+  height: 52px;
+
+  position: absolute;
+  top: -26px;
+  .tram {
+    .tram-number {
+      background-color: #ffffff;
+      border: 1px solid #000000;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      text-align: center;
+      font-size: 0.7rem;
+      line-height: 20px;
+    }
+
+    .tram-icon {
+      width: 25px;
+      height: 25px;
+    }
+  }
+}

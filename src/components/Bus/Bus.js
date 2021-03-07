@@ -1,15 +1,37 @@
-import React from "react";
-import "./bus.css";
+import React, { useState } from "react";
+import "./bus.scss";
 import { Marker } from "react-leaflet";
 import L from "leaflet";
+import ActiveBusSvg from "./active-bus.svg";
+import BusSvg from "./bus.svg";
 
-const busIcon = new L.Icon({
-  iconUrl: "/img/bus.svg",
-  iconRetinaUrl: "/img/bus.svg",
-  iconSize: [25, 25]
-});
+function createBusIcon(busNumber, isActive) {
+  if (isActive) {
+    return new L.divIcon({
+      className: "bus-wrapper",
+      html: `<div class="bus">
+      <div class="bus-number">${busNumber}</div>
+      <img class="bus-icon" src=${ActiveBusSvg} alt="bus" />
+    </div>`
+    });
+  }
+
+  return new L.divIcon({
+    className: "bus-wrapper",
+    html: `<div class="bus">
+      <div class="bus-number">${busNumber}</div>
+      <img class="bus-icon" src=${BusSvg} alt="bus" />
+    </div>`
+  });
+}
 
 export default function Bus({ info, onMarkerOpen }) {
+  const [isActive, setActive] = useState(false);
+
+  const busNumber = info.name.split(" ")[0];
+
+  const busIcon = createBusIcon(busNumber, isActive);
+
 
   // TODO: displaying path, like with trams:
   /*
@@ -41,10 +63,12 @@ export default function Bus({ info, onMarkerOpen }) {
 
   function openMarker() {
     // TODO: add some arrow or change icon color
+    setActive(true);
     onMarkerOpen(info);
   }
 
   function closeMarker() {
+    setActive(false);
     // TODO: revert to previous icon
   }
 

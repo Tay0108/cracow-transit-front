@@ -16,11 +16,11 @@ export default function App() {
   const buses = useBuses();
   const busStops = useBusStops();
 
-  const [displayBuses, setDisplayBuses] = useState(false);
+  const [displayBuses, setDisplayBuses] = useState(true);
   const [displayBusStops, setDisplayBusStops] = useState(false);
   const [displayTrams, setDisplayTrams] = useState(true);
   const [displayTramStops, setDisplayTramStops] = useState(false);
-  const [clustering, setClustering] = useState(true);
+  const [clustering, setClustering] = useState(false);
 
   const [markerOpen, setMarkerOpen] = useState(false);
   const [markerObjectType, setMarkerObjectType] = useState(null);

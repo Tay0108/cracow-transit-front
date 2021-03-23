@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { ChangeEvent, useState } from "react";
 import "./App.css";
 import MapContainer from "./components/MapContainer/MapContainer";
 import MapOptions from "./components/MapOptions/MapOptions";
@@ -9,6 +9,7 @@ import useTramStops from "./hooks/useTramStops";
 import useBusStops from "./hooks/useBusStops";
 import useTrams from "./hooks/useTrams";
 import useBuses from "./hooks/useBuses";
+import { Bus, BusStop, Tram, TramStop } from "./types/types";
 
 export default function App() {
   const trams = useTrams();
@@ -16,43 +17,43 @@ export default function App() {
   const buses = useBuses();
   const busStops = useBusStops();
 
-  const [displayBuses, setDisplayBuses] = useState(true);
-  const [displayBusStops, setDisplayBusStops] = useState(false);
-  const [displayTrams, setDisplayTrams] = useState(true);
-  const [displayTramStops, setDisplayTramStops] = useState(false);
-  const [clustering, setClustering] = useState(false);
+  const [displayBuses, setDisplayBuses] = useState<boolean>(true);
+  const [displayBusStops, setDisplayBusStops] = useState<boolean>(false);
+  const [displayTrams, setDisplayTrams] = useState<boolean>(true);
+  const [displayTramStops, setDisplayTramStops] = useState<boolean>(false);
+  const [clustering, setClustering] = useState<boolean>(false);
 
-  const [markerOpen, setMarkerOpen] = useState(false);
-  const [markerObjectType, setMarkerObjectType] = useState(null);
+  const [markerOpen, setMarkerOpen] = useState<boolean>(false);
+  const [markerObjectType, setMarkerObjectType] = useState<string | null>(null); // enum as well
 
-  const [openBus, setOpenBus] = useState(null);
-  const [openTram, setOpenTram] = useState(null);
-  const [openBusStop, setOpenBusStop] = useState(null);
-  const [openTramStop, setOpenTramStop] = useState(null);
+  const [openBus, setOpenBus] = useState<Bus | null>(null);
+  const [openTram, setOpenTram] = useState<Tram | null>(null);
+  const [openBusStop, setOpenBusStop] = useState<BusStop | null>(null);
+  const [openTramStop, setOpenTramStop] = useState<TramStop | null>(null);
 
   const [vehiclePath, setVehiclePath] = useState(null);
 
-  function toggleDisplayBusStops(event) {
+  function toggleDisplayBusStops(event: ChangeEvent<HTMLInputElement>) {
     setDisplayBusStops(event.target.checked);
   }
 
-  function toggleDisplayBuses(event) {
+  function toggleDisplayBuses(event: ChangeEvent<HTMLInputElement>) {
     setDisplayBuses(event.target.checked);
   }
 
-  function toggleDisplayTramStops(event) {
+  function toggleDisplayTramStops(event: ChangeEvent<HTMLInputElement>) {
     setDisplayTramStops(event.target.checked);
   }
 
-  function toggleDisplayTrams(event) {
+  function toggleDisplayTrams(event: ChangeEvent<HTMLInputElement>) {
     setDisplayTrams(event.target.checked);
   }
 
-  function toggleClustering(event) {
+  function toggleClustering(event: ChangeEvent<HTMLInputElement>) {
     setClustering(event.target.checked);
   }
 
-  function openTramDetails(tram) {
+  function openTramDetails(tram: Tram) {
     setMarkerOpen(true);
     setMarkerObjectType("tram");
     setOpenTram(tram);
@@ -65,7 +66,7 @@ export default function App() {
     setVehiclePath(null);
   }
 
-  function openTramStopDetails(tramStop) {
+  function openTramStopDetails(tramStop: TramStop) {
     setMarkerOpen(true);
     setMarkerObjectType("tram_stop");
     setOpenTramStop(tramStop);
@@ -77,7 +78,7 @@ export default function App() {
     setOpenTramStop(null);
   }
 
-  function openBusDetails(bus) {
+  function openBusDetails(bus: Bus) {
     setMarkerOpen(true);
     setMarkerObjectType("bus");
     setOpenBus(bus);
@@ -89,7 +90,7 @@ export default function App() {
     setOpenBus(null);
   }
 
-  function openBusStopDetails(busStop) {
+  function openBusStopDetails(busStop: BusStop) {
     setMarkerOpen(true);
     setMarkerObjectType("bus_stop");
     setOpenBusStop(busStop);

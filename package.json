@@ -22,7 +22,7 @@
     "react-leaflet-markercluster": "^2.0.0",
     "react-scripts": "^5.0.1",
     "react-spinners": "^0.10.6",
-    "serve": "^14.1.2"
+    "serve": "^14.2.4"
   },
   "devDependencies": {
     "@types/jest": "^26.0.21",
